@@ -5,10 +5,12 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
 
     steps:
     - uses: actions/checkout@v2
+    - name: libxml2
+      run: brew install libxml2
     - name: Build
       run: swift build -Xcc -I/usr/local/opt/libxml2/include/libxml2
     - name: Run tests
