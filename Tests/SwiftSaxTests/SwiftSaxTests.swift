@@ -29,13 +29,16 @@ final class SwiftSaxTests: XCTestCase {
             events.append(event)
         }
         try parser.parse(data: "text".data)
-        XCTAssertEqual(events, [
-            .startDocument,
-            .startElement(name: "p", attribues: [:]),
-            .characters(value: "text"),
-            .endElement(name: "p"),
-            .endDocument
-        ])
+        XCTAssertEqual(
+            events,
+            [
+                .startDocument,
+                .startElement(name: "p", attribues: [:]),
+                .characters(value: "text"),
+                .endElement(name: "p"),
+                .endDocument
+            ]
+        )
     }
 
     func testOpenHtmlElements() throws {
@@ -45,16 +48,19 @@ final class SwiftSaxTests: XCTestCase {
             events.append(event)
         }
         try parser.parse(data: testOpenHtmlElementsString.data)
-        XCTAssertEqual(events, [
-            .startDocument,
-            .startElement(name: "div", attribues: [:]),
-            .startElement(name: "div", attribues: [:]),
-            .startElement(name: "div", attribues: [:]),
-            .endElement(name: "div"),
-            .endElement(name: "div"),
-            .endElement(name: "div"),
-            .endDocument
-        ])
+        XCTAssertEqual(
+            events,
+            [
+                .startDocument,
+                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attribues: [:]),
+                .endElement(name: "div"),
+                .endElement(name: "div"),
+                .endElement(name: "div"),
+                .endDocument
+            ]
+        )
     }
 
     func testClosedHtmlElements() throws {
@@ -64,16 +70,19 @@ final class SwiftSaxTests: XCTestCase {
             events.append(event)
         }
         try parser.parse(data: testClosedHtmlElementsString.data)
-        XCTAssertEqual(events, [
-            .startDocument,
-            .startElement(name: "div", attribues: [:]),
-            .startElement(name: "div", attribues: [:]),
-            .startElement(name: "div", attribues: [:]),
-            .endElement(name: "div"),
-            .endElement(name: "div"),
-            .endElement(name: "div"),
-            .endDocument
-        ])
+        XCTAssertEqual(
+            events,
+            [
+                .startDocument,
+                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attribues: [:]),
+                .endElement(name: "div"),
+                .endElement(name: "div"),
+                .endElement(name: "div"),
+                .endDocument
+            ]
+        )
     }
 
     func testHtmlElementsWithText() throws {
@@ -83,19 +92,22 @@ final class SwiftSaxTests: XCTestCase {
             events.append(event)
         }
         try parser.parse(data: testHtmlElementsWithTextString.data)
-        XCTAssertEqual(events, [
-            .startDocument,
-            .startElement(name: "div", attribues: [:]),
-            .characters(value: "here"),
-            .startElement(name: "div", attribues: [:]),
-            .characters(value: "is"),
-            .startElement(name: "div", attribues: [:]),
-            .characters(value: "some"),
-            .endElement(name: "div"),
-            .endElement(name: "div"),
-            .endElement(name: "div"),
-            .endDocument
-        ])
+        XCTAssertEqual(
+            events,
+            [
+                .startDocument,
+                .startElement(name: "div", attribues: [:]),
+                .characters(value: "here"),
+                .startElement(name: "div", attribues: [:]),
+                .characters(value: "is"),
+                .startElement(name: "div", attribues: [:]),
+                .characters(value: "some"),
+                .endElement(name: "div"),
+                .endElement(name: "div"),
+                .endElement(name: "div"),
+                .endDocument
+            ]
+        )
     }
 
     func testHtml() throws {
@@ -105,24 +117,27 @@ final class SwiftSaxTests: XCTestCase {
             events.append(event)
         }
         try parser.parse(data: testHtmlString.data)
-        XCTAssertEqual(events, [
-            .startDocument,
-            .startElement(name: "html", attribues: [:]),
-            .startElement(name: "head", attribues: [:]),
-            .startElement(name: "meta", attribues: ["http-equiv": "Content-Type", "content": "text/html; charset=utf-8"]),
-            .endElement(name: "meta"),
-            .endElement(name: "head"),
-            .startElement(name: "body", attribues: [:]),
-            .startElement(name: "h1", attribues: [:]),
-            .characters(value: "Heading"),
-            .endElement(name: "h1"),
-            .startElement(name: "p", attribues: [:]),
-            .characters(value: "Paragraph"),
-            .endElement(name: "p"),
-            .endElement(name: "body"),
-            .endElement(name: "html"),
-            .endDocument
-        ])
+        XCTAssertEqual(
+            events,
+            [
+                .startDocument,
+                .startElement(name: "html", attribues: [:]),
+                .startElement(name: "head", attribues: [:]),
+                .startElement(name: "meta", attribues: ["http-equiv": "Content-Type", "content": "text/html; charset=utf-8"]),
+                .endElement(name: "meta"),
+                .endElement(name: "head"),
+                .startElement(name: "body", attribues: [:]),
+                .startElement(name: "h1", attribues: [:]),
+                .characters(value: "Heading"),
+                .endElement(name: "h1"),
+                .startElement(name: "p", attribues: [:]),
+                .characters(value: "Paragraph"),
+                .endElement(name: "p"),
+                .endElement(name: "body"),
+                .endElement(name: "html"),
+                .endDocument
+            ]
+        )
     }
 
     func testCollect() throws {
