@@ -11,7 +11,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: libxml2
       run: brew install libxml2
-    - name: lint
+    - name: Lint
       run: cd BuildTools && swift run -c release swiftformat --lint ../
     - name: Build
       run: swift build -Xcc -I/usr/local/opt/libxml2/include/libxml2
