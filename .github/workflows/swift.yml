@@ -12,7 +12,7 @@ jobs:
     - name: Brew
       run: brew install libxml2 && brew install swiftformat
     - name: Lint
-      run: swiftformat --lint
+      run: swiftformat ./ --lint --config .swiftformat
     - name: Build
       run: swift build -Xcc -I/usr/local/opt/libxml2/include/libxml2
     - name: Run tests
