@@ -55,25 +55,27 @@ open class Parser {
                 logger.warning("Couldn't parse string in characters")
             }
         }
-        guard let parserContext = htmlCreatePushParserCtxt(
-            &htmlParser, Unmanaged.passUnretained(self).toOpaque(), "", 0, "", XML_CHAR_ENCODING_NONE)
-        else {
-            logger.error("Couldn't create parser context")
-            throw ParserError.unknown
-        }
-        defer { htmlFreeParserCtxt(parserContext) }
-        let parseOptions = CInt(options.rawValue)
-        htmlCtxtUseOptions(parserContext, parseOptions)
+
         _ = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> Int32 in
             guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
                 logger.error("Couldn't find input pointer")
                 throw ParserError.unknown
             }
-            return htmlParseChunk(parserContext, inputPointer, Int32(data.count), 0)
-        }
-        let parseResult = htmlParseDocument(parserContext)
-        if let error = ParserError(context: parserContext, parseResult: parseResult) {
-            throw error
+            let context = Unmanaged.passUnretained(self).toOpaque()
+            guard let parserContext = htmlCreatePushParserCtxt(
+                &htmlParser, context, inputPointer, Int32(data.count), nil, XML_CHAR_ENCODING_NONE)
+            else {
+                logger.error("Couldn't create parser context")
+                throw ParserError.unknown
+            }
+            defer { htmlFreeParserCtxt(parserContext) }
+            let parseOptions = CInt(options.rawValue)
+            htmlCtxtUseOptions(parserContext, parseOptions)
+            let parseResult = htmlParseDocument(parserContext)
+            if let error = ParserError(context: parserContext, parseResult: parseResult) {
+                throw error
+            }
+            return 0
         }
     }
 }
