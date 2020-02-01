@@ -17,6 +17,10 @@ let testOpenHtmlElementsString = #"""
 <div><div><div>
 """#
 
+let testClosedHtmlElementsString = #"""
+<div><div><div></div></div></div>
+"""#
+
 let testCollectString = #"""
 <div class="offer-item-details">
     <header class="offer-item-header">

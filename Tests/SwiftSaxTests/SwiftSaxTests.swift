@@ -31,8 +31,6 @@ final class SwiftSaxTests: XCTestCase {
         try parser.parse(data: testOpenHtmlElementsString.data)
         XCTAssertEqual(events, [
             .startDocument,
-            .startElement(name: "html", attribues: [:]),
-            .startElement(name: "body", attribues: [:]),
             .startElement(name: "div", attribues: [:]),
             .startElement(name: "div", attribues: [:]),
             .startElement(name: "div", attribues: [:]),
@@ -40,9 +38,28 @@ final class SwiftSaxTests: XCTestCase {
             .endElement(name: "div"),
             .endElement(name: "div"),
             .endElement(name: "div"),
-            .endElement(name: "body"),
-            .endElement(name: "html"),
-            .endDocument])
+            .endDocument
+        ])
+    }
+
+    func testClosedHtmlElements() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testClosedHtmlElementsString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .startDocument,
+            .endDocument
+        ])
     }
 
     func testCollect() throws {

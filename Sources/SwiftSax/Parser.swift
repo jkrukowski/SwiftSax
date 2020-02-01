@@ -62,6 +62,8 @@ open class Parser {
             throw ParserError.unknown
         }
         defer { htmlFreeParserCtxt(parserContext) }
+        let parseOptions = CInt(options.rawValue)
+        htmlCtxtUseOptions(parserContext, parseOptions)
         _ = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> Int32 in
             guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
                 logger.error("Couldn't find input pointer")
@@ -69,8 +71,7 @@ open class Parser {
             }
             return htmlParseChunk(parserContext, inputPointer, Int32(data.count), 0)
         }
-        let parseOptions = CInt(options.rawValue)
-        htmlCtxtUseOptions(parserContext, parseOptions)
+
         let parseResult = htmlParseDocument(parserContext)
         if let error = ParserError(context: parserContext, parseResult: parseResult) {
             throw error
