@@ -62,6 +62,52 @@ final class SwiftSaxTests: XCTestCase {
         ])
     }
 
+    func testHtmlElementsWithText() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testHtmlElementsWithTextString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "here"),
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "is"),
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "some"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .startDocument,
+            .endDocument
+        ])
+    }
+
+    func testHtml() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testHtmlString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "here"),
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "is"),
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "some"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .startDocument,
+            .endDocument
+        ])
+    }
+
     func testCollect() throws {
         let parser = Parser()
         let start: (ParserEvent) -> Bool = {

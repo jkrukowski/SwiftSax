@@ -71,7 +71,6 @@ open class Parser {
             }
             return htmlParseChunk(parserContext, inputPointer, Int32(data.count), 0)
         }
-
         let parseResult = htmlParseDocument(parserContext)
         if let error = ParserError(context: parserContext, parseResult: parseResult) {
             throw error
