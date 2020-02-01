@@ -36,3 +36,4 @@
 --xcodeindentation disabled
 --exclude Pods,BuildTools
 --commas inline
+--exclude Tests/XCTestManifests.swift,Snapshots

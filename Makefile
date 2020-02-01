@@ -1,5 +1,4 @@
 format:
-	cd BuildTools swift run -c release swiftlint --config "../.swiftlint.yml"
 	cd BuildTools && swift run -c release swiftformat ../
 
 build:
