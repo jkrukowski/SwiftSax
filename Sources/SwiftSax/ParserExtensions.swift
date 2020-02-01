@@ -27,11 +27,11 @@ extension Parser {
         var collecting = false
         var result = [[ParserEvent]]()
         var item = [ParserEvent]()
-        self.eventHandler = { event in
+        eventHandler = { event in
             if start(event) {
                 collecting = true
             }
-            if collecting && isIncluded(event) {
+            if collecting, isIncluded(event) {
                 item.append(event)
             }
             if stop(event) {
@@ -40,14 +40,14 @@ extension Parser {
                 item = []
             }
         }
-        try self.parse(data: data)
+        try parse(data: data)
         return result
     }
 }
 
 extension Dictionary where Key == String, Value == String {
     init(nilCArray: UnsafeMutablePointer<UnsafePointer<UInt8>?>?) {
-        var result = [Key:Value]()
+        var result = [Key: Value]()
         var offset: UnsafePointer<UInt8>.Stride = 0
         var values = [String]()
         while let pointerValue = nilCArray?[offset] {

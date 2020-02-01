@@ -1,5 +1,10 @@
 .DS_Store
 /.build
+/.swiftpm
 /Packages
+BuildTools/.build
+BuildTools/.swiftpm
+BuildTools/Packages
 /*.xcodeproj
 xcuserdata/
+*.xcuserdata
