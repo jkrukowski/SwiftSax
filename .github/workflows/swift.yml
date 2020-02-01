@@ -9,10 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: libxml2
-      run: brew install libxml2
+    - name: Brew
+      run: brew install libxml2 && brew install swiftformat
     - name: Lint
-      run: cd BuildTools && swift run -c release swiftformat --lint ../
+      run: swiftformat --lint
     - name: Build
       run: swift build -Xcc -I/usr/local/opt/libxml2/include/libxml2
     - name: Run tests
