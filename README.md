@@ -3,22 +3,17 @@
 ## Build
 
 ```bash
-swift build -Xcc -I/usr/local/opt/libxml2/include/libxml2
+make build
 ```
 
 ## Test
 
 ```bash
-swift test -Xcc -I/usr/local/opt/libxml2/include/libxml2 -Xlinker -lxml2
+make test
 ```
 
 ## Generate Xcode project
 
 ```bash
-swift package generate-xcodeproj  --enable-code-coverage --xcconfig-overrides swiftsax.xcconfig
+make xcode
 ```
-
-## Source
-
-* https://blog.mro.name/2019/07/swift-libxml2-html/
-* http://blog.raymccrae.scot/2018/09/wrapping-c-function-callbacks-to-swift.html

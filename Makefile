@@ -1,3 +1,7 @@
+format:
+	cd BuildTools swift run -c release swiftlint --config "../.swiftlint.yml"
+	cd BuildTools && swift run -c release swiftformat ../
+
 build:
 	swift build -Xcc -I/usr/local/opt/libxml2/include/libxml2
 
@@ -6,7 +10,3 @@ test:
 
 xcode:
 	swift package generate-xcodeproj --xcconfig-overrides swiftsax.xcconfig
-
-format:
-	cd BuildTools swift run -c release swiftlint --config "../.swiftlint.yml"
-	cd BuildTools && swift run -c release swiftformat ../
