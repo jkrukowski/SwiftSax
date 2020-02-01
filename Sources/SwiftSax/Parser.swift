@@ -5,17 +5,17 @@
 //  Created by Krukowski, Jan on 1/29/20.
 //
 
-import Foundation
 import Clibxml2
+import Foundation
 import Logging
 
 let logger = Logger(label: "SwiftSax.Parser")
 
 open class Parser {
-    open var eventHandler: ((ParserEvent) -> ())?
+    open var eventHandler: ((ParserEvent) -> Void)?
     open var options: ParseOptions
 
-    public init(options: ParseOptions = .default, eventHandler: ((ParserEvent) -> ())? = nil) {
+    public init(options: ParseOptions = .default, eventHandler: ((ParserEvent) -> Void)? = nil) {
         self.options = options
         self.eventHandler = eventHandler
     }
@@ -32,7 +32,7 @@ open class Parser {
         }
         htmlParser.startElement = { (context: UnsafeMutableRawPointer?, namePointer: UnsafePointer<UInt8>?, attribuesPointer: UnsafeMutablePointer<UnsafePointer<UInt8>?>?) in
             if let name = String(nilCString: namePointer) {
-                let attributes = [String:String](nilCArray: attribuesPointer)
+                let attributes = [String: String](nilCArray: attribuesPointer)
                 let parser = Parser.from(context: context)
                 parser?.eventHandler?(.startElement(name: name, attribues: attributes))
             } else {
@@ -63,7 +63,8 @@ open class Parser {
             }
             let context = Unmanaged.passUnretained(self).toOpaque()
             guard let parserContext = htmlCreatePushParserCtxt(
-                &htmlParser, context, inputPointer, Int32(data.count), nil, XML_CHAR_ENCODING_NONE)
+                &htmlParser, context, inputPointer, Int32(data.count), nil, XML_CHAR_ENCODING_NONE
+            )
             else {
                 logger.error("Couldn't create parser context")
                 throw ParserError.unknown

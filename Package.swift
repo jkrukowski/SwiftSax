@@ -8,24 +8,28 @@ let package = Package(
     products: [
         .library(
             name: "SwiftSax",
-            targets: ["SwiftSax"])
+            targets: ["SwiftSax"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0")
     ],
     targets: [
         .systemLibrary(
-            name: "Clibxml2", 
-            pkgConfig: "libxml2", 
+            name: "Clibxml2",
+            pkgConfig: "libxml2",
             providers: [
                 .brew(["libxml2"]),
                 .apt(["libxml2"])
-            ]),
+            ]
+        ),
         .target(
             name: "SwiftSax",
-            dependencies: ["Clibxml2", "Logging"]),
+            dependencies: ["Clibxml2", "Logging"]
+        ),
         .testTarget(
             name: "SwiftSaxTests",
-            dependencies: ["SwiftSax", "Clibxml2"])
+            dependencies: ["SwiftSax", "Clibxml2"]
+        )
     ]
 )

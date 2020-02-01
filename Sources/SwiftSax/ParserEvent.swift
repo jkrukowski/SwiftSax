@@ -23,7 +23,7 @@ extension ParserEvent {
         name compareName: (String) -> Bool
     ) -> Bool {
         switch self {
-        case .endElement(name: let name):
+        case let .endElement(name: name):
             return compareName(name)
         default:
             return false
@@ -35,16 +35,16 @@ extension ParserEvent {
         attribute compareAttributes: ([String: String]) -> Bool = { _ in true }
     ) -> Bool {
         switch self {
-        case .startElement(name: let name, attribues: let attributes):
+        case let .startElement(name: name, attribues: attributes):
             return compareName(name) && compareAttributes(attributes)
         default:
             return false
         }
     }
 
-    public var attributes: [String:String]? {
+    public var attributes: [String: String]? {
         switch self {
-        case .startElement(_, attribues: let attributes):
+        case let .startElement(_, attribues: attributes):
             return attributes
         default:
             return nil
@@ -53,8 +53,8 @@ extension ParserEvent {
 
     public var name: String? {
         switch self {
-        case .startElement(name: let name, _),
-             .endElement(name: let name):
+        case let .startElement(name: name, _),
+             let .endElement(name: name):
             return name
         default:
             return nil
@@ -63,7 +63,7 @@ extension ParserEvent {
 
     public var value: String? {
         switch self {
-        case .characters(value: let value):
+        case let .characters(value: value):
             return value
         default:
             return nil
@@ -72,13 +72,13 @@ extension ParserEvent {
 }
 
 public func has(key: String, value: String) -> ([String: String]) -> Bool {
-    return { $0[key] == value }
+    { $0[key] == value }
 }
 
 public func has(key: String) -> ([String: String]) -> Bool {
-    return { $0[key] != nil  }
+    { $0[key] != nil }
 }
 
 public func equals(_ value: String) -> (String) -> Bool {
-    return { $0 == value }
+    { $0 == value }
 }

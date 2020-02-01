@@ -1,5 +1,5 @@
-import XCTest
 @testable import SwiftSax
+import XCTest
 
 final class SwiftSaxTests: XCTestCase {
     func testEmptyData() throws {

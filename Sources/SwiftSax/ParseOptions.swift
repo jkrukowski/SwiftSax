@@ -5,8 +5,8 @@
 //  Created by Krukowski, Jan on 1/31/20.
 //
 
-import Foundation
 import Clibxml2
+import Foundation
 
 public struct ParseOptions: OptionSet {
     public let rawValue: Int
