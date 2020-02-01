@@ -2,18 +2,50 @@ import XCTest
 @testable import SwiftSax
 
 final class SwiftSaxTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmptyData() throws {
         var events = [ParserEvent]()
         let parser = Parser()
         parser.eventHandler = { event in
             events.append(event)
         }
         try parser.parse(data: Data())
-        XCTAssertEqual(events, [ParserEvent.startDocument, ParserEvent.endDocument])
+        XCTAssertEqual(events, [.startDocument, .endDocument])
+    }
+
+    func testWhitespaceString() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: "  ".data)
+        XCTAssertEqual(events, [.startDocument, .startDocument, .endDocument])
+    }
+
+    func testOpenHtmlElements() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testOpenHtmlElementsString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "html", attribues: [:]),
+            .startElement(name: "body", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .startDocument,
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "body"),
+            .endElement(name: "html"),
+            .endDocument])
     }
 
     func testCollect() throws {
-        let data = data1.data(using: .utf8)!
         let parser = Parser()
         let start: (ParserEvent) -> Bool = {
             $0.filterStart(
@@ -31,7 +63,7 @@ final class SwiftSaxTests: XCTestCase {
             )
         }
         let result = try parser.collect(
-            data: data,
+            data: testCollectString.data,
             start: start,
             stop: stop,
             isIncluded: isIncluded
@@ -46,7 +78,7 @@ final class SwiftSaxTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testEmpty", testEmpty),
+        ("testEmptyData", testEmptyData),
         ("testCollect", testCollect)
     ]
 }

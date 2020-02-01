@@ -7,8 +7,17 @@
 
 import Foundation
 
+extension String {
+    var data: Data {
+        return data(using: .utf8)!
+    }
+}
 
-let data1 = #"""
+let testOpenHtmlElementsString = #"""
+<div><div><div>
+"""#
+
+let testCollectString = #"""
 <div class="offer-item-details">
     <header class="offer-item-header">
         <h3>
