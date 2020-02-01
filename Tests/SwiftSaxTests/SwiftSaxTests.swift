@@ -22,6 +22,22 @@ final class SwiftSaxTests: XCTestCase {
         XCTAssertEqual(events, [.startDocument, .endDocument])
     }
 
+    func testStringNoHtmlElements() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: "text".data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "p", attribues: [:]),
+            .characters(value: "text"),
+            .endElement(name: "p"),
+            .endDocument
+        ])
+    }
+
     func testOpenHtmlElements() throws {
         var events = [ParserEvent]()
         let parser = Parser()
@@ -143,6 +159,12 @@ final class SwiftSaxTests: XCTestCase {
 
     static var allTests = [
         ("testEmptyData", testEmptyData),
+        ("testWhitespaceString", testWhitespaceString),
+        ("testStringNoHtmlElements", testStringNoHtmlElements),
+        ("testOpenHtmlElements", testOpenHtmlElements),
+        ("testClosedHtmlElements", testClosedHtmlElements),
+        ("testHtmlElementsWithText", testHtmlElementsWithText),
+        ("testHtml", testHtml),
         ("testCollect", testCollect)
     ]
 }
