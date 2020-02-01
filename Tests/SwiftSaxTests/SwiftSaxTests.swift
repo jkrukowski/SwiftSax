@@ -2,18 +2,130 @@ import XCTest
 @testable import SwiftSax
 
 final class SwiftSaxTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmptyData() throws {
         var events = [ParserEvent]()
         let parser = Parser()
         parser.eventHandler = { event in
             events.append(event)
         }
         try parser.parse(data: Data())
-        XCTAssertEqual(events, [ParserEvent.startDocument, ParserEvent.endDocument])
+        XCTAssertEqual(events, [.startDocument, .endDocument])
+    }
+
+    func testWhitespaceString() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: "  ".data)
+        XCTAssertEqual(events, [.startDocument, .endDocument])
+    }
+
+    func testStringNoHtmlElements() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: "text".data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "p", attribues: [:]),
+            .characters(value: "text"),
+            .endElement(name: "p"),
+            .endDocument
+        ])
+    }
+
+    func testOpenHtmlElements() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testOpenHtmlElementsString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endDocument
+        ])
+    }
+
+    func testClosedHtmlElements() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testClosedHtmlElementsString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .startElement(name: "div", attribues: [:]),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endDocument
+        ])
+    }
+
+    func testHtmlElementsWithText() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testHtmlElementsWithTextString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "here"),
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "is"),
+            .startElement(name: "div", attribues: [:]),
+            .characters(value: "some"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endElement(name: "div"),
+            .endDocument
+        ])
+    }
+
+    func testHtml() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.parse(data: testHtmlString.data)
+        XCTAssertEqual(events, [
+            .startDocument,
+            .startElement(name: "html", attribues: [:]),
+            .startElement(name: "head", attribues: [:]),
+            .startElement(name: "meta", attribues: ["http-equiv": "Content-Type", "content": "text/html; charset=utf-8"]),
+            .endElement(name: "meta"),
+            .endElement(name: "head"),
+            .startElement(name: "body", attribues: [:]),
+            .startElement(name: "h1", attribues: [:]),
+            .characters(value: "Heading"),
+            .endElement(name: "h1"),
+            .startElement(name: "p", attribues: [:]),
+            .characters(value: "Paragraph"),
+            .endElement(name: "p"),
+            .endElement(name: "body"),
+            .endElement(name: "html"),
+            .endDocument
+        ])
     }
 
     func testCollect() throws {
-        let data = data1.data(using: .utf8)!
         let parser = Parser()
         let start: (ParserEvent) -> Bool = {
             $0.filterStart(
@@ -31,7 +143,7 @@ final class SwiftSaxTests: XCTestCase {
             )
         }
         let result = try parser.collect(
-            data: data,
+            data: testCollectString.data,
             start: start,
             stop: stop,
             isIncluded: isIncluded
@@ -46,7 +158,13 @@ final class SwiftSaxTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testEmpty", testEmpty),
+        ("testEmptyData", testEmptyData),
+        ("testWhitespaceString", testWhitespaceString),
+        ("testStringNoHtmlElements", testStringNoHtmlElements),
+        ("testOpenHtmlElements", testOpenHtmlElements),
+        ("testClosedHtmlElements", testClosedHtmlElements),
+        ("testHtmlElementsWithText", testHtmlElementsWithText),
+        ("testHtml", testHtml),
         ("testCollect", testCollect)
     ]
 }

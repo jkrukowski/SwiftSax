@@ -7,8 +7,35 @@
 
 import Foundation
 
+extension String {
+    var data: Data {
+        return data(using: .utf8)!
+    }
+}
 
-let data1 = #"""
+let testOpenHtmlElementsString = #"""
+<div><div><div>
+"""#
+
+let testClosedHtmlElementsString = #"""
+<div><div><div></div></div></div>
+"""#
+
+let testHtmlElementsWithTextString = #"""
+<div>here<div>is<div>some</div></div></div>
+"""#
+
+let testHtmlString = #"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body><h1>Heading</h1><p>Paragraph</p></body>
+</html>
+"""#
+
+let testCollectString = #"""
 <div class="offer-item-details">
     <header class="offer-item-header">
         <h3>
