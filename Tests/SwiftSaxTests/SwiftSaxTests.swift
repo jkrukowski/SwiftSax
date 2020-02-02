@@ -172,6 +172,33 @@ final class SwiftSaxTests: XCTestCase {
         XCTAssertEqual(result[1][0].name, "a")
     }
 
+    func testCollectMultiple() throws {
+        let parser = Parser()
+        let start: (ParserEvent) -> Bool = {
+            $0.filterStart(
+                name: equals("div"),
+                attribute: has(key: "class", value: "select")
+            )
+        }
+        let stop: (ParserEvent) -> Bool = {
+            $0.filterEnd(name: equals("div"))
+        }
+        let result = try parser.collect(
+            data: testCollectMultipleString.data,
+            start: start,
+            stop: stop
+        )
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(
+            result[0],
+            [
+                .startElement(name: "div", attribues: ["class": "select"]),
+                .startElement(name: "div", attribues: [:]),
+                .endElement(name: "div")
+            ]
+        )
+    }
+
     static var allTests = [
         ("testEmptyData", testEmptyData),
         ("testWhitespaceString", testWhitespaceString),

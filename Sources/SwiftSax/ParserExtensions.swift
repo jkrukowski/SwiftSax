@@ -34,7 +34,7 @@ extension Parser {
             if collecting, isIncluded(event) {
                 item.append(event)
             }
-            if stop(event) {
+            if collecting, stop(event) {
                 collecting = false
                 result.append(item)
                 item = []
