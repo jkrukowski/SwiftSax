@@ -198,15 +198,4 @@ final class SwiftSaxTests: XCTestCase {
             ]
         )
     }
-
-    static var allTests = [
-        ("testEmptyData", testEmptyData),
-        ("testWhitespaceString", testWhitespaceString),
-        ("testStringNoHtmlElements", testStringNoHtmlElements),
-        ("testOpenHtmlElements", testOpenHtmlElements),
-        ("testClosedHtmlElements", testClosedHtmlElements),
-        ("testHtmlElementsWithText", testHtmlElementsWithText),
-        ("testHtml", testHtml),
-        ("testCollect", testCollect)
-    ]
 }
