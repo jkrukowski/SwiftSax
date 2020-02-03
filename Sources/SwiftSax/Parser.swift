@@ -79,4 +79,17 @@ open class Parser {
             return 0
         }
     }
+
+    func xPath(data: Data) throws {
+        _ = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> Int32 in
+            guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
+                logger.error("Couldn't find input pointer")
+                throw ParserError.unknown
+            }
+            let parseOptions = CInt(options.rawValue)
+            let parserContext = htmlReadMemory(inputPointer, Int32(data.count), "", nil, parseOptions)
+            defer { xmlFreeDoc(parserContext) }
+            return 0
+        }
+    }
 }
