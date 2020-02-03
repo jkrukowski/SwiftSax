@@ -80,16 +80,31 @@ open class Parser {
         }
     }
 
-    func xPath(data: Data) throws {
-        _ = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> Int32 in
+    func xPath(data: Data, xpath: String = "//div") throws {
+        let inputPointer = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> UnsafePointer<CChar> in
             guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
                 logger.error("Couldn't find input pointer")
                 throw ParserError.unknown
             }
-            let parseOptions = CInt(options.rawValue)
-            let parserContext = htmlReadMemory(inputPointer, Int32(data.count), "", nil, parseOptions)
-            defer { xmlFreeDoc(parserContext) }
-            return 0
+            return inputPointer
         }
+        let parseOptions = CInt(options.rawValue)
+        guard let parserContext = htmlReadMemory(inputPointer, Int32(data.count), "", nil, parseOptions) else {
+            logger.error("Couldn't create parser context")
+            throw ParserError.unknown
+        }
+        defer { xmlFreeDoc(parserContext) }
+        guard let xpathContext = xmlXPathNewContext(parserContext) else {
+            logger.error("Couldn't create parser context")
+            throw ParserError.unknown
+        }
+        defer { xmlXPathFreeContext(xpathContext) }
+        guard let xmlXPath = xmlXPathEvalExpression(xpath, xpathContext) else {
+            logger.error("Couldn't create parser context")
+            throw ParserError.unknown
+        }
+        print(xmlXPath)
+//            return 0
+//        }
     }
 }

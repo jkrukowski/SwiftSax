@@ -139,4 +139,14 @@ final class SwiftSaxTests: XCTestCase {
             ]
         )
     }
+
+    func testXpath() throws {
+        var events = [ParserEvent]()
+        let parser = Parser()
+        parser.eventHandler = { event in
+            events.append(event)
+        }
+        try parser.xPath(data: testHtmlString.data)
+        print("ok")
+    }
 }
