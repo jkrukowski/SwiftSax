@@ -34,7 +34,7 @@ open class Parser {
             if let name = String(nilCString: namePointer) {
                 let attributes = [String: String](nilCArray: attribuesPointer)
                 let parser = Parser.from(context: context)
-                parser?.eventHandler?(.startElement(name: name, attribues: attributes))
+                parser?.eventHandler?(.startElement(name: name, attributes: attributes))
             } else {
                 logger.warning("Couldn't parse string in startElement")
             }

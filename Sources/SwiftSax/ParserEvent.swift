@@ -10,7 +10,7 @@ import Foundation
 public enum ParserEvent {
     case startDocument
     case endDocument
-    case startElement(name: String, attribues: [String: String])
+    case startElement(name: String, attributes: [String: String])
     case endElement(name: String)
     case characters(value: String)
 }
@@ -35,7 +35,7 @@ extension ParserEvent {
         attribute compareAttributes: ([String: String]) -> Bool = { _ in true }
     ) -> Bool {
         switch self {
-        case let .startElement(name: name, attribues: attributes):
+        case let .startElement(name: name, attributes: attributes):
             return compareName(name) && compareAttributes(attributes)
         default:
             return false
@@ -44,7 +44,7 @@ extension ParserEvent {
 
     public var attributes: [String: String]? {
         switch self {
-        case let .startElement(_, attribues: attributes):
+        case let .startElement(_, attributes: attributes):
             return attributes
         default:
             return nil

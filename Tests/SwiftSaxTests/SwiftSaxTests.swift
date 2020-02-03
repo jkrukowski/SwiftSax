@@ -33,7 +33,7 @@ final class SwiftSaxTests: XCTestCase {
             events,
             [
                 .startDocument,
-                .startElement(name: "p", attribues: [:]),
+                .startElement(name: "p", attributes: [:]),
                 .characters(value: "text"),
                 .endElement(name: "p"),
                 .endDocument
@@ -52,9 +52,9 @@ final class SwiftSaxTests: XCTestCase {
             events,
             [
                 .startDocument,
-                .startElement(name: "div", attribues: [:]),
-                .startElement(name: "div", attribues: [:]),
-                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attributes: [:]),
+                .startElement(name: "div", attributes: [:]),
+                .startElement(name: "div", attributes: [:]),
                 .endElement(name: "div"),
                 .endElement(name: "div"),
                 .endElement(name: "div"),
@@ -74,9 +74,9 @@ final class SwiftSaxTests: XCTestCase {
             events,
             [
                 .startDocument,
-                .startElement(name: "div", attribues: [:]),
-                .startElement(name: "div", attribues: [:]),
-                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attributes: [:]),
+                .startElement(name: "div", attributes: [:]),
+                .startElement(name: "div", attributes: [:]),
                 .endElement(name: "div"),
                 .endElement(name: "div"),
                 .endElement(name: "div"),
@@ -96,11 +96,11 @@ final class SwiftSaxTests: XCTestCase {
             events,
             [
                 .startDocument,
-                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attributes: [:]),
                 .characters(value: "here"),
-                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attributes: [:]),
                 .characters(value: "is"),
-                .startElement(name: "div", attribues: [:]),
+                .startElement(name: "div", attributes: [:]),
                 .characters(value: "some"),
                 .endElement(name: "div"),
                 .endElement(name: "div"),
@@ -121,80 +121,21 @@ final class SwiftSaxTests: XCTestCase {
             events,
             [
                 .startDocument,
-                .startElement(name: "html", attribues: [:]),
-                .startElement(name: "head", attribues: [:]),
-                .startElement(name: "meta", attribues: ["http-equiv": "Content-Type", "content": "text/html; charset=utf-8"]),
+                .startElement(name: "html", attributes: [:]),
+                .startElement(name: "head", attributes: [:]),
+                .startElement(name: "meta", attributes: ["http-equiv": "Content-Type", "content": "text/html; charset=utf-8"]),
                 .endElement(name: "meta"),
                 .endElement(name: "head"),
-                .startElement(name: "body", attribues: [:]),
-                .startElement(name: "h1", attribues: [:]),
+                .startElement(name: "body", attributes: [:]),
+                .startElement(name: "h1", attributes: [:]),
                 .characters(value: "Heading"),
                 .endElement(name: "h1"),
-                .startElement(name: "p", attribues: [:]),
+                .startElement(name: "p", attributes: [:]),
                 .characters(value: "Paragraph"),
                 .endElement(name: "p"),
                 .endElement(name: "body"),
                 .endElement(name: "html"),
                 .endDocument
-            ]
-        )
-    }
-
-    func testCollect() throws {
-        let parser = Parser()
-        let start: (ParserEvent) -> Bool = {
-            $0.filterStart(
-                name: equals("header"),
-                attribute: has(key: "class", value: "offer-item-header")
-            )
-        }
-        let stop: (ParserEvent) -> Bool = {
-            $0.filterEnd(name: equals("header"))
-        }
-        let isIncluded: (ParserEvent) -> Bool = {
-            $0.filterStart(
-                name: equals("a"),
-                attribute: has(key: "href")
-            )
-        }
-        let result = try parser.collect(
-            data: testCollectString.data,
-            start: start,
-            stop: stop,
-            isIncluded: isIncluded
-        )
-        XCTAssertEqual(result.count, 2)
-        XCTAssertEqual(result[0].count, 1)
-        XCTAssertEqual(result[1].count, 1)
-        XCTAssertNotNil(result[0][0].attributes?["href"])
-        XCTAssertNotNil(result[1][0].attributes?["href"])
-        XCTAssertEqual(result[0][0].name, "a")
-        XCTAssertEqual(result[1][0].name, "a")
-    }
-
-    func testCollectMultiple() throws {
-        let parser = Parser()
-        let start: (ParserEvent) -> Bool = {
-            $0.filterStart(
-                name: equals("div"),
-                attribute: has(key: "class", value: "select")
-            )
-        }
-        let stop: (ParserEvent) -> Bool = {
-            $0.filterEnd(name: equals("div"))
-        }
-        let result = try parser.collect(
-            data: testCollectMultipleString.data,
-            start: start,
-            stop: stop
-        )
-        XCTAssertEqual(result.count, 1)
-        XCTAssertEqual(
-            result[0],
-            [
-                .startElement(name: "div", attribues: ["class": "select"]),
-                .startElement(name: "div", attribues: [:]),
-                .endElement(name: "div")
             ]
         )
     }

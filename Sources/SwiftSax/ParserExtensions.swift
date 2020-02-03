@@ -17,34 +17,6 @@ extension Parser {
     }
 }
 
-extension Parser {
-    public func collect(
-        data: Data,
-        start: @escaping (ParserEvent) -> Bool,
-        stop: @escaping (ParserEvent) -> Bool,
-        isIncluded: @escaping (ParserEvent) -> Bool = { _ in true }
-    ) throws -> [[ParserEvent]] {
-        var collecting = false
-        var result = [[ParserEvent]]()
-        var item = [ParserEvent]()
-        eventHandler = { event in
-            if start(event) {
-                collecting = true
-            }
-            if collecting, isIncluded(event) {
-                item.append(event)
-            }
-            if collecting, stop(event) {
-                collecting = false
-                result.append(item)
-                item = []
-            }
-        }
-        try parse(data: data)
-        return result
-    }
-}
-
 extension Dictionary where Key == String, Value == String {
     init(nilCArray: UnsafeMutablePointer<UnsafePointer<UInt8>?>?) {
         var result = [Key: Value]()
