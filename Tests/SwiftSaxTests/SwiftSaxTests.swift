@@ -141,12 +141,8 @@ final class SwiftSaxTests: XCTestCase {
     }
 
     func testXpath() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.xPath(data: testHtmlString.data)
-        print("ok")
+        let parser = PathParser()
+        try parser.parse(data: testCollectString.data)
+        try parser.find(path: "//header[@class='offer-item-header']//a/@href | //header[@class='offer-item-header']//a/@data-id")
     }
 }

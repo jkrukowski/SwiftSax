@@ -79,8 +79,17 @@ open class Parser {
             return 0
         }
     }
+}
 
-    func xPath(data: Data, xpath: String = "//div") throws {
+open class PathParser {
+    open var options: ParseOptions
+    private var parserContext: htmlDocPtr?
+
+    public init(options: ParseOptions = .default) {
+        self.options = options
+    }
+
+    open func parse(data: Data) throws {
         let inputPointer = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> UnsafePointer<CChar> in
             guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
                 logger.error("Couldn't find input pointer")
@@ -93,18 +102,31 @@ open class Parser {
             logger.error("Couldn't create parser context")
             throw ParserError.unknown
         }
-        defer { xmlFreeDoc(parserContext) }
+        self.parserContext = parserContext
+    }
+
+    open func find(path: String) throws {
         guard let xpathContext = xmlXPathNewContext(parserContext) else {
-            logger.error("Couldn't create parser context")
+            logger.error("Couldn't create xPath context")
             throw ParserError.unknown
         }
         defer { xmlXPathFreeContext(xpathContext) }
-        guard let xmlXPath = xmlXPathEvalExpression(xpath, xpathContext) else {
-            logger.error("Couldn't create parser context")
+        guard let xpath = xmlXPathEvalExpression(path, xpathContext) else {
+            logger.error("Couldn't evaluate xPath expression")
             throw ParserError.unknown
         }
-        print(xmlXPath)
-//            return 0
-//        }
+        guard let nodeSet = xpath.pointee.nodesetval else {
+            return
+        }
+        let endIndex = nodeSet.pointee.nodeNr
+        for index in 0..<endIndex {
+            if let node = nodeSet.pointee.nodeTab?[Int(index)] {
+                print(String(cString: node.pointee.children.pointee.content))
+            }
+        }
+    }
+
+    deinit {
+        xmlFreeDoc(parserContext)
     }
 }
