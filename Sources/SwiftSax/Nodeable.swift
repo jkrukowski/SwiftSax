@@ -15,14 +15,10 @@ protocol Nodeable: Attributeable {
 
 extension Nodeable {
     var attributeNodes: [Node] {
-        var result = [Node]()
-        let stride = MemoryLayout<_xmlAttr>.stride
-        var index = 0
-        while let attributeable = properties?[index], let node = Node(attributeable: attributeable) {
-            result.append(node)
-            index += stride
-        }
-        return result
+        return Self.parse(
+            children: properties,
+            createNode: Node.init(attributeable:)
+        )
     }
 }
 
