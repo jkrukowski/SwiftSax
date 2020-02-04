@@ -24,14 +24,14 @@ extension Attributeable {
     }
 
     var childrenNodes: [Node] {
-        return Self.parse(
+        return PathParser.parse(
             children: children,
             createNode: Node.init(nodeable:)
         )
     }
 }
 
-extension Attributeable {
+extension PathParser {
     static func parse<T>(children: UnsafeMutablePointer<T>!, createNode: (T) -> Node?) -> [Node] {
         var result = [Node]()
         let stride = MemoryLayout<T>.stride

@@ -15,7 +15,7 @@ protocol Nodeable: Attributeable {
 
 extension Nodeable {
     var attributeNodes: [Node] {
-        return Self.parse(
+        return PathParser.parse(
             children: properties,
             createNode: Node.init(attributeable:)
         )
