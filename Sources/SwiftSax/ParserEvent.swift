@@ -19,29 +19,6 @@ extension ParserEvent: Equatable {}
 extension ParserEvent: Hashable {}
 
 extension ParserEvent {
-    public func filterEnd(
-        name compareName: (String) -> Bool
-    ) -> Bool {
-        switch self {
-        case let .endElement(name: name):
-            return compareName(name)
-        default:
-            return false
-        }
-    }
-
-    public func filterStart(
-        name compareName: (String) -> Bool,
-        attribute compareAttributes: ([String: String]) -> Bool = { _ in true }
-    ) -> Bool {
-        switch self {
-        case let .startElement(name: name, attributes: attributes):
-            return compareName(name) && compareAttributes(attributes)
-        default:
-            return false
-        }
-    }
-
     public var attributes: [String: String]? {
         switch self {
         case let .startElement(_, attributes: attributes):
@@ -69,16 +46,4 @@ extension ParserEvent {
             return nil
         }
     }
-}
-
-public func has(key: String, value: String) -> ([String: String]) -> Bool {
-    { $0[key] == value }
-}
-
-public func has(key: String) -> ([String: String]) -> Bool {
-    { $0[key] != nil }
-}
-
-public func equals(_ value: String) -> (String) -> Bool {
-    { $0 == value }
 }
