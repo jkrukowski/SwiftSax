@@ -187,18 +187,17 @@ extension Attributable {
     }
 
     var childrenNodes: [Node] {
-        var nodeChildren = [Node]()
-        var hasChildren = children != nil
+        var result = [Node]()
         var current = children
-        while hasChildren {
-            if let pointer = current, let c = Node(node: pointer.pointee) {
-                nodeChildren.append(c)
+        while current != nil {
+            if let pointer = current, let node = Node(node: pointer.pointee) {
+                result.append(node)
                 current = current?.successor()
             } else {
-                hasChildren = false
+                current = nil
             }
         }
-        return nodeChildren
+        return result
     }
 }
 
@@ -209,18 +208,17 @@ protocol Nodable: Attributable {
 
 extension Nodable {
     var attributeNodes: [Node] {
-        var nodeAttributes = [Node]()
-        var hasAttributes = properties != nil
-        var attributes = properties
-        while hasAttributes {
-            if let pointer = attributes, let c = Node(attribute: pointer.pointee) {
-                nodeAttributes.append(c)
-                attributes = attributes?.successor()
+        var result = [Node]()
+        var current = properties
+        while current != nil {
+            if let pointer = current, let node = Node(attribute: pointer.pointee) {
+                result.append(node)
+                current = current?.successor()
             } else {
-                hasAttributes = false
+                current = nil
             }
         }
-        return nodeAttributes
+        return result
     }
 }
 
