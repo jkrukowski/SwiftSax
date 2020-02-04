@@ -5,8 +5,8 @@
 //  Created by Krukowski, Jan on 2/4/20.
 //
 
-import Foundation
 import Clibxml2
+import Foundation
 
 public struct Node {
     public var type: NodeType
@@ -22,10 +22,10 @@ extension Node {
             return nil
         }
         self.type = type
-        self.name = attributeable.nameString
-        self.content = nil
-        self.children = attributeable.childrenNodes
-        self.attributes = []
+        name = attributeable.nameString
+        content = nil
+        children = attributeable.childrenNodes
+        attributes = []
     }
 
     init?(nodeable: Nodeable) {
@@ -33,10 +33,10 @@ extension Node {
             return nil
         }
         self.type = type
-        self.name = nodeable.nameString
-        self.content = nodeable.contentString
-        self.children = nodeable.childrenNodes
-        self.attributes = nodeable.attributeNodes
+        name = nodeable.nameString
+        content = nodeable.contentString
+        children = nodeable.childrenNodes
+        attributes = nodeable.attributeNodes
     }
 }
 
@@ -48,7 +48,7 @@ extension Node {
         }
         let endIndex = nodeSet.pointee.nodeNr
         let nodeTab = nodeSet.pointee.nodeTab
-        for index in 0..<endIndex {
+        for index in 0 ..< endIndex {
             if let rawNode = nodeTab?[Int(index)], let node = Node(nodeable: rawNode.pointee) {
                 result.append(node)
             }

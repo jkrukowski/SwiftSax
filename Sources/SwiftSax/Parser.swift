@@ -64,10 +64,10 @@ open class Parser {
             let context = Unmanaged.passUnretained(self).toOpaque()
             guard let parserContext = htmlCreatePushParserCtxt(
                 &htmlParser, context, inputPointer, Int32(data.count), nil, XML_CHAR_ENCODING_NONE
-                )
-                else {
-                    logger.error("Couldn't create parser context")
-                    throw ParserError.unknown
+            )
+            else {
+                logger.error("Couldn't create parser context")
+                throw ParserError.unknown
             }
             defer { htmlFreeParserCtxt(parserContext) }
             let parseOptions = CInt(options.rawValue)

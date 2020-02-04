@@ -5,8 +5,8 @@
 //  Created by Krukowski, Jan on 2/4/20.
 //
 
-import Foundation
 import Clibxml2
+import Foundation
 
 protocol Attributeable {
     var type: xmlElementType { get }
@@ -20,11 +20,11 @@ extension Attributeable {
     }
 
     var nameString: String {
-        return String(cString: name)
+        String(cString: name)
     }
 
     var childrenNodes: [Node] {
-        return PathParser.parse(
+        PathParser.parse(
             children: children,
             createNode: Node.init(nodeable:)
         )

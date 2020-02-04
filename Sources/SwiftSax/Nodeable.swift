@@ -5,8 +5,8 @@
 //  Created by Krukowski, Jan on 2/4/20.
 //
 
-import Foundation
 import Clibxml2
+import Foundation
 
 protocol Nodeable: Attributeable {
     var content: UnsafeMutablePointer<xmlChar>! { get }
@@ -15,7 +15,7 @@ protocol Nodeable: Attributeable {
 
 extension Nodeable {
     var attributeNodes: [Node] {
-        return PathParser.parse(
+        PathParser.parse(
             children: properties,
             createNode: Node.init(attributeable:)
         )
