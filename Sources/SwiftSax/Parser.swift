@@ -140,42 +140,6 @@ extension Node {
     }
 }
 
-//struct _xmlNode {
-//    void           *_private;    /* application data */
-//    xmlElementType   type;    /* type number, must be second ! */
-//    const xmlChar   *name;      /* the name of the node, or the entity */
-//    struct _xmlNode *children;    /* parent->childs link */
-//    struct _xmlNode *last;    /* last child link */
-//    struct _xmlNode *parent;    /* child->parent link */
-//    struct _xmlNode *next;    /* next sibling link  */
-//    struct _xmlNode *prev;    /* previous sibling link  */
-//    struct _xmlDoc  *doc;    /* the containing document */
-//
-//    /* End of common part */
-//    xmlNs           *ns;        /* pointer to the associated namespace */
-//    xmlChar         *content;   /* the content */
-//    struct _xmlAttr *properties;/* properties list */
-//    xmlNs           *nsDef;     /* namespace definitions on this node */
-//    void            *psvi;    /* for type/PSVI informations */
-//    unsigned short   line;    /* line number */
-//    unsigned short   extra;    /* extra data for XPath/XSLT */
-//};
-
-//struct _xmlAttr {
-//    void           *_private;    /* application data */
-//    xmlElementType   type;      /* XML_ATTRIBUTE_NODE, must be second ! */
-//    const xmlChar   *name;      /* the name of the property */
-//    struct _xmlNode *children;    /* the value of the property */
-//    struct _xmlNode *last;    /* NULL */
-//    struct _xmlNode *parent;    /* child->parent link */
-//    struct _xmlAttr *next;    /* next sibling link  */
-//    struct _xmlAttr *prev;    /* previous sibling link  */
-//    struct _xmlDoc  *doc;    /* the containing document */
-//    xmlNs           *ns;        /* pointer to the associated namespace */
-//    xmlAttributeType atype;     /* the attribute type if validating */
-//    void            *psvi;    /* for type/PSVI informations */
-//};
-
 public enum NodeType: Int {
     case element = 1
     case attribute = 2
@@ -207,13 +171,50 @@ public struct Node {
     public var content: String?
 }
 
+protocol Attributable {
+    var type: xmlElementType { get }
+    var name: UnsafePointer<xmlChar>! { get }
+    var children: UnsafeMutablePointer<_xmlNode>! { get }
+}
+
+extension Attributable {
+    var nodeType: NodeType? {
+        NodeType(rawValue: Int(type.rawValue))
+    }
+
+    var nameString: String {
+        return String(cString: name)
+    }
+}
+
+protocol Nodable: Attributable {
+    var content: UnsafeMutablePointer<xmlChar>! { get }
+    var properties: UnsafeMutablePointer<_xmlAttr>! { get }
+}
+
+extension Nodable {
+    var contentString: String? {
+        guard let cString = content else {
+            return nil
+        }
+        return String(cString: cString)
+    }
+}
+
+extension _xmlNode: Nodable {
+}
+
+extension _xmlAttr: Attributable {
+
+}
+
 extension Node {
-    init?(attribute: _xmlAttr) {
-        guard let type = NodeType(rawValue: Int(attribute.type.rawValue)) else {
+    init?(attribute: Attributable) {
+        guard let type = attribute.nodeType else {
             return nil
         }
         self.type = type
-        self.name = String(cString: attribute.name)
+        self.name = attribute.nameString
         self.content = nil
         var nodeChildren = [Node]()
         var hasChildren = attribute.children != nil
@@ -230,17 +231,13 @@ extension Node {
         self.attributes = []
     }
 
-    init?(node: _xmlNode) {
-        guard let type = NodeType(rawValue: Int(node.type.rawValue)) else {
+    init?(node: Nodable) {
+        guard let type = node.nodeType else {
             return nil
         }
         self.type = type
-        self.name = String(cString: node.name)
-        if let content = node.content {
-            self.content = String(cString: content)
-        } else {
-            self.content = nil
-        }
+        self.name = node.nameString
+        self.content = node.contentString
         var nodeChildren = [Node]()
         var hasChildren = node.children != nil
         var children = node.children
