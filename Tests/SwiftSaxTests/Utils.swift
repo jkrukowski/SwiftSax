@@ -73,7 +73,3 @@ let testCollectString = #"""
     </header>
 </div>
 """#
-
-let testCollectMultipleString = #"""
-<div><div class="select"><div></div></div></div>
-"""#

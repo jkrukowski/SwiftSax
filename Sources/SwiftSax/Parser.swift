@@ -34,7 +34,7 @@ open class Parser {
             if let name = String(nilCString: namePointer) {
                 let attributes = [String: String](nilCArray: attribuesPointer)
                 let parser = Parser.from(context: context)
-                parser?.eventHandler?(.startElement(name: name, attribues: attributes))
+                parser?.eventHandler?(.startElement(name: name, attributes: attributes))
             } else {
                 logger.warning("Couldn't parse string in startElement")
             }
@@ -78,5 +78,47 @@ open class Parser {
             }
             return 0
         }
+    }
+}
+
+open class PathParser {
+    open var options: ParseOptions
+    private var parserContext: htmlDocPtr?
+
+    public init(options: ParseOptions = .default) {
+        self.options = options
+    }
+
+    open func parse(data: Data) throws {
+        let inputPointer = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> UnsafePointer<CChar> in
+            guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
+                logger.error("Couldn't find input pointer")
+                throw ParserError.unknown
+            }
+            return inputPointer
+        }
+        let parseOptions = CInt(options.rawValue)
+        guard let parserContext = htmlReadMemory(inputPointer, Int32(data.count), "", nil, parseOptions) else {
+            logger.error("Couldn't create parser context")
+            throw ParserError.unknown
+        }
+        self.parserContext = parserContext
+    }
+
+    open func find(path: String) throws -> [Node] {
+        guard let xpathContext = xmlXPathNewContext(parserContext) else {
+            logger.error("Couldn't create xPath context")
+            throw ParserError.unknown
+        }
+        defer { xmlXPathFreeContext(xpathContext) }
+        guard let xpath = xmlXPathEvalExpression(path, xpathContext) else {
+            logger.error("Couldn't evaluate xPath expression")
+            throw ParserError.unknown
+        }
+        return Node.from(xpath: xpath)
+    }
+
+    deinit {
+        xmlFreeDoc(parserContext)
     }
 }
