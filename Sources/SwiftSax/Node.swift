@@ -17,26 +17,26 @@ public struct Node {
 }
 
 extension Node {
-    init?(attribute: Attributable) {
-        guard let type = attribute.nodeType else {
+    init?(attributeable: Attributeable) {
+        guard let type = attributeable.nodeType else {
             return nil
         }
         self.type = type
-        self.name = attribute.nameString
+        self.name = attributeable.nameString
         self.content = nil
-        self.children = attribute.childrenNodes
+        self.children = attributeable.childrenNodes
         self.attributes = []
     }
 
-    init?(node: Nodable) {
-        guard let type = node.nodeType else {
+    init?(nodeable: Nodeable) {
+        guard let type = nodeable.nodeType else {
             return nil
         }
         self.type = type
-        self.name = node.nameString
-        self.content = node.contentString
-        self.children = node.childrenNodes
-        self.attributes = node.attributeNodes
+        self.name = nodeable.nameString
+        self.content = nodeable.contentString
+        self.children = nodeable.childrenNodes
+        self.attributes = nodeable.attributeNodes
     }
 }
 
@@ -49,7 +49,7 @@ extension Node {
         let endIndex = nodeSet.pointee.nodeNr
         let nodeTab = nodeSet.pointee.nodeTab
         for index in 0..<endIndex {
-            if let rawNode = nodeTab?[Int(index)], let node = Node(node: rawNode.pointee) {
+            if let rawNode = nodeTab?[Int(index)], let node = Node(nodeable: rawNode.pointee) {
                 result.append(node)
             }
         }

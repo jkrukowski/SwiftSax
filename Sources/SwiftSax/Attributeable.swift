@@ -1,5 +1,5 @@
 //
-//  Attributable.swift
+//  Attributeable.swift
 //  Logging
 //
 //  Created by Krukowski, Jan on 2/4/20.
@@ -8,13 +8,13 @@
 import Foundation
 import Clibxml2
 
-protocol Attributable {
+protocol Attributeable {
     var type: xmlElementType { get }
     var name: UnsafePointer<xmlChar>! { get }
     var children: UnsafeMutablePointer<_xmlNode>! { get }
 }
 
-extension Attributable {
+extension Attributeable {
     var nodeType: NodeType? {
         NodeType(rawValue: Int(type.rawValue))
     }
@@ -25,17 +25,14 @@ extension Attributable {
 
     var childrenNodes: [Node] {
         var result = [Node]()
-        var current = children
-        while current != nil {
-            if let pointer = current, let node = Node(node: pointer.pointee) {
-                result.append(node)
-                current = current?.successor()
-            } else {
-                current = nil
-            }
+        let stride = MemoryLayout<_xmlNode>.stride
+        var index = 0
+        while let nodeable = children?[index], let node = Node(nodeable: nodeable) {
+            result.append(node)
+            index += stride
         }
         return result
     }
 }
 
-extension _xmlAttr: Attributable {}
+extension _xmlAttr: Attributeable {}
