@@ -185,11 +185,43 @@ extension Attributable {
     var nameString: String {
         return String(cString: name)
     }
+
+    var childrenNodes: [Node] {
+        var nodeChildren = [Node]()
+        var hasChildren = children != nil
+        var current = children
+        while hasChildren {
+            if let pointer = current, let c = Node(node: pointer.pointee) {
+                nodeChildren.append(c)
+                current = current?.successor()
+            } else {
+                hasChildren = false
+            }
+        }
+        return nodeChildren
+    }
 }
 
 protocol Nodable: Attributable {
     var content: UnsafeMutablePointer<xmlChar>! { get }
     var properties: UnsafeMutablePointer<_xmlAttr>! { get }
+}
+
+extension Nodable {
+    var attributeNodes: [Node] {
+        var nodeAttributes = [Node]()
+        var hasAttributes = properties != nil
+        var attributes = properties
+        while hasAttributes {
+            if let pointer = attributes, let c = Node(attribute: pointer.pointee) {
+                nodeAttributes.append(c)
+                attributes = attributes?.successor()
+            } else {
+                hasAttributes = false
+            }
+        }
+        return nodeAttributes
+    }
 }
 
 extension Nodable {
@@ -216,18 +248,7 @@ extension Node {
         self.type = type
         self.name = attribute.nameString
         self.content = nil
-        var nodeChildren = [Node]()
-        var hasChildren = attribute.children != nil
-        var children = attribute.children
-        while hasChildren {
-            if let pointer = children, let c = Node(node: pointer.pointee) {
-                nodeChildren.append(c)
-                children = children?.successor()
-            } else {
-                hasChildren = false
-            }
-        }
-        self.children = nodeChildren
+        self.children = attribute.childrenNodes
         self.attributes = []
     }
 
@@ -238,31 +259,7 @@ extension Node {
         self.type = type
         self.name = node.nameString
         self.content = node.contentString
-        var nodeChildren = [Node]()
-        var hasChildren = node.children != nil
-        var children = node.children
-        while hasChildren {
-            if let pointer = children, let c = Node(node: pointer.pointee) {
-                nodeChildren.append(c)
-                children = children?.successor()
-            } else {
-                hasChildren = false
-            }
-        }
-        self.children = nodeChildren
-
-        var nodeAttributes = [Node]()
-        var hasAttributes = node.properties != nil
-        var attributes = node.properties
-        while hasAttributes {
-            if let pointer = attributes, let c = Node(attribute: pointer.pointee) {
-                nodeAttributes.append(c)
-                attributes = attributes?.successor()
-            } else {
-                hasAttributes = false
-            }
-        }
-        self.attributes = nodeAttributes
+        self.children = node.childrenNodes
+        self.attributes = node.attributeNodes
     }
-
 }
