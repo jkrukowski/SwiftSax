@@ -24,7 +24,7 @@ extension Nodeable {
 
     var childrenNodes: [Node] {
         PathParser.parse(
-            next: self,
+            next: children.pointee,
             createNode: Node.init(nodeable:)
         )
     }
