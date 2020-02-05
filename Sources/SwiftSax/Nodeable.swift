@@ -11,6 +11,7 @@ import Foundation
 protocol Nodeable: Attributeable {
     var content: UnsafeMutablePointer<xmlChar>! { get }
     var properties: UnsafeMutablePointer<_xmlAttr>! { get }
+    var next: UnsafeMutablePointer<_xmlNode>! { get }
 }
 
 extension Nodeable {
@@ -18,6 +19,13 @@ extension Nodeable {
         PathParser.parse(
             children: properties,
             createNode: Node.init(attributeable:)
+        )
+    }
+
+    var childrenNodes: [Node] {
+        PathParser.parse(
+            next: self,
+            createNode: Node.init(nodeable:)
         )
     }
 }

@@ -22,12 +22,21 @@ extension Attributeable {
     var nameString: String {
         String(cString: name)
     }
+}
 
-    var childrenNodes: [Node] {
-        PathParser.parse(
-            children: children,
-            createNode: Node.init(nodeable:)
-        )
+extension PathParser {
+    static func parse(next: Nodeable, createNode: (_xmlNode) -> Node?) -> [Node] {
+        var result = [Node]()
+        var current = next.next
+        while let nodeable = current {
+            if let node = createNode(nodeable.pointee) {
+                result.append(node)
+                current = current?.pointee.next
+            } else {
+                print("Xxx")
+            }
+        }
+        return result
     }
 }
 
@@ -36,9 +45,13 @@ extension PathParser {
         var result = [Node]()
         let stride = MemoryLayout<T>.stride
         var index = 0
-        while let nodeable = children?[index], let node = createNode(nodeable) {
-            result.append(node)
-            index += stride
+        while let nodeable = children?[index] {
+            if let node = createNode(nodeable) {
+                result.append(node)
+                index += stride
+            } else {
+                print("Xxx")
+            }
         }
         return result
     }

@@ -24,7 +24,7 @@ extension Node {
         self.type = type
         name = attributeable.nameString
         content = nil
-        children = attributeable.childrenNodes
+        children = [] //attributeable.childrenNodes
         attributes = []
     }
 
