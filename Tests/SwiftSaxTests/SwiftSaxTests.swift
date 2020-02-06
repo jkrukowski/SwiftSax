@@ -18,7 +18,29 @@ final class SwiftSaxTests: XCTestCase {
         let parser = try Parser(data: "<div><div></div></div>".data)
         XCTAssertTrue(try parser.find(path: "//a").isEmpty)
         XCTAssertTrue(try parser.find(path: "//div[@class='some']").isEmpty)
-        XCTAssertEqual(try parser.find(path: "//div").count, 2)
+        var result = try parser.find(path: "/div")
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result[0].content, "")
+        XCTAssertTrue(result[0].children.isEmpty)
+        XCTAssertTrue(result[0].attributes.isEmpty)
+    }
+
+    func testXpathAttribute() throws {
+        let parser = try Parser(data: #"<div><div class="some" key="value">text</div></div>"#.data)
+        var result = try parser.find(path: "//div[@class='some']")
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result[0].attributes["class"], "some")
+        XCTAssertEqual(result[0].attributes["key"], "value")
+        XCTAssertEqual(result[0].content, "text")
+    }
+
+    func testXpathChildren() throws {
+        let parser = try Parser(data: #"<div class="some" key="value"><h1>text</h1></div>"#.data)
+        var result = try parser.find(path: "//div[@key='value']")
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result[0].attributes["class"], "some")
+        XCTAssertEqual(result[0].attributes["key"], "value")
+        XCTAssertEqual(result[0].content, "text")
     }
 
     func testXpath() throws {
