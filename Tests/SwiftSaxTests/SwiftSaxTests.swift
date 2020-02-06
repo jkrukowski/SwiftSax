@@ -166,4 +166,11 @@ final class SwiftSaxTests: XCTestCase {
         XCTAssertEqual(result[3].children[0].type, .text)
         XCTAssertEqual(result[3].children[0].content, "999")
     }
+
+    func testXpath2() throws {
+        let parser = PathParser()
+        try parser.parse(data: testCollectString.data)
+        let result = try parser.find(path: "//header[@class='offer-item-header']//strong")
+        print(result)
+    }
 }
