@@ -10,5 +10,7 @@ import Clibxml2
 import Foundation
 
 public enum ParserError: Error {
-    case unknown
+    case context
+    case data
+    case xpath
 }

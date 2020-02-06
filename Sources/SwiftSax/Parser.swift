@@ -20,14 +20,14 @@ open class Parser {
         let inputPointer = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> UnsafePointer<CChar> in
             guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
                 logger.error("Couldn't find input pointer")
-                throw ParserError.unknown
+                throw ParserError.data
             }
             return inputPointer
         }
         let parseOptions = CInt(options.rawValue)
         guard let parserContext = htmlReadMemory(inputPointer, Int32(data.count), "", nil, parseOptions) else {
             logger.error("Couldn't create parser context")
-            throw ParserError.unknown
+            throw ParserError.context
         }
         self.parserContext = parserContext
     }
@@ -35,12 +35,12 @@ open class Parser {
     open func find(path: String) throws -> [Node] {
         guard let xpathContext = xmlXPathNewContext(parserContext) else {
             logger.error("Couldn't create xPath context")
-            throw ParserError.unknown
+            throw ParserError.context
         }
         defer { xmlXPathFreeContext(xpathContext) }
         guard let xpath = xmlXPathEvalExpression(path, xpathContext) else {
             logger.error("Couldn't evaluate xPath expression")
-            throw ParserError.unknown
+            throw ParserError.xpath
         }
         return Node.from(xpath: xpath)
     }

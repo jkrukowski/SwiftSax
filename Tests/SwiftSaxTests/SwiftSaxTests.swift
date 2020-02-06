@@ -2,146 +2,27 @@
 import XCTest
 
 final class SwiftSaxTests: XCTestCase {
-    func testEmptyData() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.parse(data: Data())
-        XCTAssertEqual(events, [.startDocument, .endDocument])
+    func testEmptyData() {
+        XCTAssertThrowsError(try Parser(data: Data()))
+        XCTAssertThrowsError(try Parser(data: "".data))
+        XCTAssertNoThrow(try Parser(data: " ".data))
     }
 
-    func testWhitespaceString() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.parse(data: "  ".data)
-        XCTAssertEqual(events, [.startDocument, .endDocument])
+    func testInvalidXPath() throws {
+        let parser = try Parser(data: " ".data)
+        XCTAssertThrowsError(try parser.find(path: ""))
+        XCTAssertThrowsError(try parser.find(path: "\\"))
     }
 
-    func testStringNoHtmlElements() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.parse(data: "text".data)
-        XCTAssertEqual(
-            events,
-            [
-                .startDocument,
-                .startElement(name: "p", attributes: [:]),
-                .characters(value: "text"),
-                .endElement(name: "p"),
-                .endDocument
-            ]
-        )
-    }
-
-    func testOpenHtmlElements() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.parse(data: testOpenHtmlElementsString.data)
-        XCTAssertEqual(
-            events,
-            [
-                .startDocument,
-                .startElement(name: "div", attributes: [:]),
-                .startElement(name: "div", attributes: [:]),
-                .startElement(name: "div", attributes: [:]),
-                .endElement(name: "div"),
-                .endElement(name: "div"),
-                .endElement(name: "div"),
-                .endDocument
-            ]
-        )
-    }
-
-    func testClosedHtmlElements() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.parse(data: testClosedHtmlElementsString.data)
-        XCTAssertEqual(
-            events,
-            [
-                .startDocument,
-                .startElement(name: "div", attributes: [:]),
-                .startElement(name: "div", attributes: [:]),
-                .startElement(name: "div", attributes: [:]),
-                .endElement(name: "div"),
-                .endElement(name: "div"),
-                .endElement(name: "div"),
-                .endDocument
-            ]
-        )
-    }
-
-    func testHtmlElementsWithText() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.parse(data: testHtmlElementsWithTextString.data)
-        XCTAssertEqual(
-            events,
-            [
-                .startDocument,
-                .startElement(name: "div", attributes: [:]),
-                .characters(value: "here"),
-                .startElement(name: "div", attributes: [:]),
-                .characters(value: "is"),
-                .startElement(name: "div", attributes: [:]),
-                .characters(value: "some"),
-                .endElement(name: "div"),
-                .endElement(name: "div"),
-                .endElement(name: "div"),
-                .endDocument
-            ]
-        )
-    }
-
-    func testHtml() throws {
-        var events = [ParserEvent]()
-        let parser = Parser()
-        parser.eventHandler = { event in
-            events.append(event)
-        }
-        try parser.parse(data: testHtmlString.data)
-        XCTAssertEqual(
-            events,
-            [
-                .startDocument,
-                .startElement(name: "html", attributes: [:]),
-                .startElement(name: "head", attributes: [:]),
-                .startElement(name: "meta", attributes: ["http-equiv": "Content-Type", "content": "text/html; charset=utf-8"]),
-                .endElement(name: "meta"),
-                .endElement(name: "head"),
-                .startElement(name: "body", attributes: [:]),
-                .startElement(name: "h1", attributes: [:]),
-                .characters(value: "Heading"),
-                .endElement(name: "h1"),
-                .startElement(name: "p", attributes: [:]),
-                .characters(value: "Paragraph"),
-                .endElement(name: "p"),
-                .endElement(name: "body"),
-                .endElement(name: "html"),
-                .endDocument
-            ]
-        )
+    func testXpathResult() throws {
+        let parser = try Parser(data: "<div><div></div></div>".data)
+        XCTAssertTrue(try parser.find(path: "//a").isEmpty)
+        XCTAssertTrue(try parser.find(path: "//div[@class='some']").isEmpty)
+        XCTAssertEqual(try parser.find(path: "//div").count, 2)
     }
 
     func testXpath() throws {
-        let parser = try PathParser(data: testCollectString.data)
+        let parser = try Parser(data: testString.data)
         var result = try parser.find(path: "//header[@class='offer-item-header']//a/@href | //header[@class='offer-item-header']//a/@data-id")
         XCTAssertEqual(result.count, 4)
         XCTAssertEqual(result[0].name, "href")
@@ -167,7 +48,7 @@ final class SwiftSaxTests: XCTestCase {
     }
 
     func testXpath2() throws {
-        let parser = try PathParser(data: testCollectString.data)
+        let parser = try Parser(data: testString.data)
         var result = try parser.find(path: "//header[@class='offer-item-header']//strong")
         XCTAssertEqual(result.count, 2)
         XCTAssertEqual(result[0].name, "strong")
