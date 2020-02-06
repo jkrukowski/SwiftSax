@@ -12,23 +12,27 @@ public struct Node {
     public var type: NodeType
     public var name: String
     public var children: [Node]
-    public var attributes: [Node]
+    public var attributes: [String: String]
     public var content: String?
 }
 
 extension Node {
-    init?(attributeable: Attributeable) {
-        guard let type = attributeable.nodeType else {
+//    init?(attributeable: Attributeable) {
+//        guard let type = attributeable.nodeType else {
+//            return nil
+//        }
+//        self.type = type
+//        name = attributeable.nameString
+//        content = nil
+//        children = [] //attributeable.childrenNodes
+//        attributes = []
+//    }
+
+    init?(pointer: UnsafePointer<_xmlNode>?) {
+        guard let pointer = pointer else {
             return nil
         }
-        self.type = type
-        name = attributeable.nameString
-        content = nil
-        children = [] //attributeable.childrenNodes
-        attributes = []
-    }
-
-    init?(nodeable: Nodeable) {
+        let nodeable = pointer.pointee
         guard let type = nodeable.nodeType else {
             return nil
         }
@@ -36,7 +40,7 @@ extension Node {
         name = nodeable.nameString
         content = nodeable.contentString
         children = nodeable.childrenNodes
-        attributes = nodeable.attributeNodes
+        attributes = nodeable.attributes(for: pointer)
     }
 }
 
@@ -49,7 +53,7 @@ extension Node {
         let endIndex = nodeSet.pointee.nodeNr
         let nodeTab = nodeSet.pointee.nodeTab
         for index in 0 ..< endIndex {
-            if let rawNode = nodeTab?[Int(index)], let node = Node(nodeable: rawNode.pointee) {
+            if let rawNode = nodeTab?[Int(index)], let node = Node(pointer: rawNode) {
                 result.append(node)
             }
         }

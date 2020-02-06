@@ -8,26 +8,20 @@
 import Clibxml2
 import Foundation
 
-protocol Attributeable {
-    var type: xmlElementType { get }
-    var name: UnsafePointer<xmlChar>! { get }
-    var children: UnsafeMutablePointer<_xmlNode>! { get }
-}
-
-extension Attributeable {
-    var nodeType: NodeType? {
-        NodeType(rawValue: Int(type.rawValue))
-    }
-
-    var nameString: String {
-        String(cString: name)
-    }
-}
+//protocol Attributeable {
+//    var type: xmlElementType { get }
+//    var name: UnsafePointer<xmlChar>! { get }
+//    var children: UnsafeMutablePointer<_xmlNode>! { get }
+//}
+//
+//extension Attributeable {
+//
+//}
 
 extension PathParser {
     static func parse(next: Nodeable?, createNode: (_xmlNode) -> Node?) -> [Node] {
         var result = [Node]()
-        var current = next?.next
+        var current = next?.children
         while let nodeable = current, let node = createNode(nodeable.pointee) {
             result.append(node)
             current = current?.pointee.next
@@ -49,4 +43,4 @@ extension PathParser {
     }
 }
 
-extension _xmlAttr: Attributeable {}
+//extension _xmlAttr: Attributeable {}
