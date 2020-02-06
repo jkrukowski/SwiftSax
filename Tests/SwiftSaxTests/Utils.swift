@@ -40,7 +40,7 @@ let testCollectString = #"""
     <header class="offer-item-header">
         <h3>
             <a href="https://link.com/to/offer" data-tracking="click_body">
-                <strong class="visible-xs-block">38 m²</strong>
+                <strong class="visible-xs-block">38 m</strong>
             </a>
         </h3>
         <p class="text-nowrap"><span class="hidden-xs">Mieszkanie na sprzedaż: </span>Wrocław, Stare Miasto</p>
@@ -57,7 +57,7 @@ let testCollectString = #"""
     <header class="offer-item-header">
         <h3>
             <a href="https://link.com/to/offer2" data-tracking="click_body">
-                <strong class="visible-xs-block">38 m²</strong>
+                <strong class="visible-xs-block">48 m</strong>
             </a>
         </h3>
         <p class="text-nowrap"><span class="hidden-xs">Mieszkanie na sprzedaż: </span>Wrocław, Stare Miasto</p>
