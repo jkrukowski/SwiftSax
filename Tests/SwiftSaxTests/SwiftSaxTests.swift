@@ -170,7 +170,7 @@ final class SwiftSaxTests: XCTestCase {
     func testXpath2() throws {
         let parser = PathParser()
         try parser.parse(data: testCollectString.data)
-        let result = try parser.find(path: "//header[@class='offer-item-header']//a")
+        let result = try parser.find(path: "//header[@class='offer-item-header']//strong")
         print(result)
     }
 }

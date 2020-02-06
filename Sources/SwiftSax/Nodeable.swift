@@ -8,7 +8,7 @@
 import Clibxml2
 import Foundation
 
-protocol Nodeable { //}: Attributeable {
+protocol Nodeable {
     var type: xmlElementType { get }
     var name: UnsafePointer<xmlChar>! { get }
     var children: UnsafeMutablePointer<_xmlNode>! { get }
@@ -46,6 +46,16 @@ extension _xmlNode {
         return attributes
     }
 
+    func content(for pointer: UnsafePointer<_xmlNode>) -> String? {
+        guard let value = xmlNodeGetContent(pointer) else {
+            return nil
+        }
+        defer {
+            xmlFree(value)
+        }
+        return parseString(from: value)
+    }
+
     func attributes(for name: String, with pointer: UnsafePointer<_xmlNode>) -> String? {
         guard let xmlValue = xmlGetProp(pointer, name) else {
             return nil
@@ -74,15 +84,6 @@ extension PathParser {
             current = current?.pointee.next
         }
         return result
-    }
-}
-
-extension Nodeable {
-    var contentString: String? {
-        guard let cString = content else {
-            return nil
-        }
-        return String(cString: cString)
     }
 }
 

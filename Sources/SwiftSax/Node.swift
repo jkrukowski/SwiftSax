@@ -27,7 +27,7 @@ extension Node {
         }
         self.type = type
         name = nodeable.nameString
-        content = nodeable.contentString
+        content = nodeable.content(for: pointer)
         children = nodeable.children(for: nodeable.children)
         attributes = nodeable.attributes(for: pointer)
     }
