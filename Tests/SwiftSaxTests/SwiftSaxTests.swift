@@ -143,7 +143,7 @@ final class SwiftSaxTests: XCTestCase {
     func testXpath() throws {
         let parser = PathParser()
         try parser.parse(data: testCollectString.data)
-        let result = try parser.find(path: "//header[@class='offer-item-header']//a/@href | //header[@class='offer-item-header']//a/@data-id")
+        var result = try parser.find(path: "//header[@class='offer-item-header']//a/@href | //header[@class='offer-item-header']//a/@data-id")
         XCTAssertEqual(result.count, 4)
         XCTAssertEqual(result[0].name, "href")
         XCTAssertEqual(result[0].content, "https://link.com/to/offer")
@@ -170,7 +170,7 @@ final class SwiftSaxTests: XCTestCase {
     func testXpath2() throws {
         let parser = PathParser()
         try parser.parse(data: testCollectString.data)
-        let result = try parser.find(path: "//header[@class='offer-item-header']//strong")
+        var result = try parser.find(path: "//header[@class='offer-item-header']//strong")
         XCTAssertEqual(result.count, 2)
         XCTAssertEqual(result[0].name, "strong")
         XCTAssertEqual(result[0].content, "38 m")

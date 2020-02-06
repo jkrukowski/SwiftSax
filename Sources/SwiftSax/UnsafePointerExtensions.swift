@@ -55,7 +55,7 @@ extension UnsafePointer where Pointee == _xmlNode {
         }
         var result = [Node]()
         var current = children.pointee.next
-        while let pointer = current, let node = Node(pointer: pointer) {
+        while let pointer = current, let node = Node(nilPointer: pointer) {
             result.append(node)
             current = current?.pointee.next
         }

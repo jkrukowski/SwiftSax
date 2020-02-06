@@ -9,23 +9,26 @@ import Clibxml2
 import Foundation
 
 public struct Node {
-    public var type: NodeType
-    public var name: String
-    public var children: [Node]
-    public var attributes: [String: String]
-    public var content: String?
+    public lazy var type: NodeType? = pointer.nodeType()
+    public lazy var name: String = pointer.name()
+    public lazy var children: [Node] = pointer.children()
+    public lazy var attributes: [String: String] = pointer.attributes()
+    public lazy var content: String? = pointer.content()
+    private let pointer: UnsafePointer<_xmlNode>
 }
 
 extension Node {
-    init?(pointer: UnsafePointer<_xmlNode>?) {
-        guard let pointer = pointer, let nodeType = pointer.nodeType() else {
+    init(pointer: UnsafePointer<_xmlNode>) {
+        self.pointer = pointer
+    }
+}
+
+extension Node {
+    init?(nilPointer: UnsafePointer<_xmlNode>?) {
+        guard let pointer = nilPointer else {
             return nil
         }
-        type = nodeType
-        name = pointer.name()
-        content = pointer.content()
-        children = pointer.children()
-        attributes = pointer.attributes()
+        self.init(pointer: pointer)
     }
 }
 
@@ -38,7 +41,7 @@ extension Node {
         let endIndex = nodeSet.pointee.nodeNr
         let nodeTab = nodeSet.pointee.nodeTab
         for index in 0 ..< endIndex {
-            if let rawNode = nodeTab?[Int(index)], let node = Node(pointer: rawNode) {
+            if let rawNode = nodeTab?[Int(index)], let node = Node(nilPointer: rawNode) {
                 result.append(node)
             }
         }
