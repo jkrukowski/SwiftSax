@@ -1,12 +1,21 @@
 //
-//  UnsafePointerExtensions.swift
-//  Logging
+//  Extensions.swift
+//  swiftsax
 //
 //  Created by Krukowski, Jan on 2/4/20.
 //
 
 import Clibxml2
 import Foundation
+
+extension String {
+    init?(nilCString: UnsafePointer<UInt8>?) {
+        guard let cString = nilCString else {
+            return nil
+        }
+        self.init(cString: cString)
+    }
+}
 
 extension UnsafePointer where Pointee == _xmlNode {
     func name() -> String {
