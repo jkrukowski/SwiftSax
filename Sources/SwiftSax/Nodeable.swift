@@ -47,20 +47,33 @@ extension _xmlNode {
     }
 
     func attributes(for name: String, with pointer: UnsafePointer<_xmlNode>) -> String? {
-        var value: String? = nil
-        if let xmlValue = xmlGetProp(pointer, name) {
-            value = parseString(from: xmlValue)
+        guard let xmlValue = xmlGetProp(pointer, name) else {
+            return nil
+        }
+        defer {
             xmlFree(xmlValue)
         }
-        return value
+        return parseString(from: xmlValue)
     }
 
-    var childrenNodes: [Node] {
-        []
-//        PathParser.parse(
-//            next: children?.pointee,
-//            createNode: Node.init(nodeable:)
-//        )
+    func children(for pointer: UnsafeMutablePointer<_xmlNode>?) -> [Node] {
+        guard let pointer = pointer else {
+            return []
+        }
+        return PathParser.parse(head: pointer, createNode: Node.init(pointer:))
+
+    }
+}
+
+extension PathParser {
+    static func parse(head: xmlNodePtr?, createNode: (UnsafePointer<_xmlNode>) -> Node?) -> [Node] {
+        var result = [Node]()
+        var current = head?.pointee.next
+        while let nodeable = current, let node = createNode(nodeable) {
+            result.append(node)
+            current = current?.pointee.next
+        }
+        return result
     }
 }
 

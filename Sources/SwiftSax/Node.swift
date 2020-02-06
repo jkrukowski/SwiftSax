@@ -17,17 +17,6 @@ public struct Node {
 }
 
 extension Node {
-//    init?(attributeable: Attributeable) {
-//        guard let type = attributeable.nodeType else {
-//            return nil
-//        }
-//        self.type = type
-//        name = attributeable.nameString
-//        content = nil
-//        children = [] //attributeable.childrenNodes
-//        attributes = []
-//    }
-
     init?(pointer: UnsafePointer<_xmlNode>?) {
         guard let pointer = pointer else {
             return nil
@@ -39,7 +28,7 @@ extension Node {
         self.type = type
         name = nodeable.nameString
         content = nodeable.contentString
-        children = nodeable.childrenNodes
+        children = nodeable.children(for: nodeable.children)
         attributes = nodeable.attributes(for: pointer)
     }
 }

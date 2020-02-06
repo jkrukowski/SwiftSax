@@ -18,17 +18,7 @@ import Foundation
 //
 //}
 
-extension PathParser {
-    static func parse(next: Nodeable?, createNode: (_xmlNode) -> Node?) -> [Node] {
-        var result = [Node]()
-        var current = next?.children
-        while let nodeable = current, let node = createNode(nodeable.pointee) {
-            result.append(node)
-            current = current?.pointee.next
-        }
-        return result
-    }
-}
+
 
 extension PathParser {
     static func parse<T>(children: UnsafeMutablePointer<T>!, createNode: (T) -> Node?) -> [Node] {
