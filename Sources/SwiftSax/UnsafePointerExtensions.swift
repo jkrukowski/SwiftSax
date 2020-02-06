@@ -17,7 +17,7 @@ extension UnsafePointer where Pointee == _xmlNode {
         NodeType(rawValue: Int(pointee.type.rawValue))
     }
 
-    func attributes() -> [String:String] {
+    func attributes() -> [String: String] {
         var attributes = [String: String]()
         var attribute = pointee.properties
         while attribute != nil {
