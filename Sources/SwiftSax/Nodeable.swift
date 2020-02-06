@@ -66,11 +66,11 @@ extension _xmlNode {
         return parseString(from: xmlValue)
     }
 
-    func children(for pointer: UnsafeMutablePointer<_xmlNode>?) -> [Node] {
-        guard let pointer = pointer else {
-            return []
-        }
-        return PathParser.parse(head: pointer, createNode: Node.init(pointer:))
+    func children(for pointer: UnsafePointer<_xmlNode>) -> [Node] {
+        return PathParser.parse(
+            head: pointer.pointee.children,
+            createNode: Node.init(pointer:)
+        )
 
     }
 }
