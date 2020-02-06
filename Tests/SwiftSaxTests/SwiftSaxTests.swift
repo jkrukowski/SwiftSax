@@ -171,6 +171,10 @@ final class SwiftSaxTests: XCTestCase {
         let parser = PathParser()
         try parser.parse(data: testCollectString.data)
         let result = try parser.find(path: "//header[@class='offer-item-header']//strong")
-        print(result)
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result[0].name, "strong")
+        XCTAssertEqual(result[0].content, "38 m")
+        XCTAssertEqual(result[1].name, "strong")
+        XCTAssertEqual(result[1].content, "48 m")
     }
 }
