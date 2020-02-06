@@ -85,11 +85,8 @@ open class PathParser {
     open var options: ParseOptions
     private var parserContext: htmlDocPtr?
 
-    public init(options: ParseOptions = .default) {
+    public init(options: ParseOptions = .default, data: Data) throws {
         self.options = options
-    }
-
-    open func parse(data: Data) throws {
         let inputPointer = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> UnsafePointer<CChar> in
             guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
                 logger.error("Couldn't find input pointer")
