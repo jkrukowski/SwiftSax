@@ -67,19 +67,12 @@ extension _xmlNode {
     }
 
     func children(for pointer: UnsafePointer<_xmlNode>) -> [Node] {
-        return PathParser.parse(
-            head: pointer.pointee.children,
-            createNode: Node.init(pointer:)
-        )
-
-    }
-}
-
-extension PathParser {
-    static func parse(head: xmlNodePtr?, createNode: (UnsafePointer<_xmlNode>) -> Node?) -> [Node] {
+        guard let children = pointer.pointee.children else {
+            return []
+        }
         var result = [Node]()
-        var current = head?.pointee.next
-        while let nodeable = current, let node = createNode(nodeable) {
+        var current = children.pointee.next
+        while let nodeable = current, let node = Node(pointer: nodeable) {
             result.append(node)
             current = current?.pointee.next
         }
