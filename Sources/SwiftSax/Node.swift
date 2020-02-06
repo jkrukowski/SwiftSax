@@ -18,18 +18,14 @@ public struct Node {
 
 extension Node {
     init?(pointer: UnsafePointer<_xmlNode>?) {
-        guard let pointer = pointer else {
+        guard let pointer = pointer, let nodeType = pointer.nodeType() else {
             return nil
         }
-        let nodeable = pointer.pointee
-        guard let type = nodeable.nodeType else {
-            return nil
-        }
-        self.type = type
-        name = nodeable.nameString
-        content = nodeable.content(for: pointer)
-        children = nodeable.children(for: pointer)
-        attributes = nodeable.attributes(for: pointer)
+        type = nodeType
+        name = pointer.name()
+        content = pointer.content()
+        children = pointer.children()
+        attributes = pointer.attributes()
     }
 }
 
