@@ -8,24 +8,35 @@
 import Clibxml2
 import Foundation
 
-public struct Node {
-    public var type: NodeType
-    public var name: String
-    public var children: [Node]
-    public var attributes: [String: String]
-    public var content: String?
+public protocol Nodeable {
+    var type: NodeType? { mutating get }
+    var name: String { mutating get }
+    var children: [Node] { mutating get }
+    var attributes: [String: String] { mutating get }
+    var content: String? { mutating get }
+}
+
+public struct Node: Nodeable {
+    public private(set) lazy var type: NodeType? = pointer.nodeType()
+    public private(set) lazy var name: String = pointer.name()
+    public private(set) lazy var children: [Node] = pointer.children()
+    public private(set) lazy var attributes: [String: String] = pointer.attributes()
+    public private(set) lazy var content: String? = pointer.content()
+    private let pointer: UnsafePointer<_xmlNode>
 }
 
 extension Node {
-    init?(pointer: UnsafePointer<_xmlNode>?) {
-        guard let pointer = pointer, let nodeType = pointer.nodeType() else {
+    init(pointer: UnsafePointer<_xmlNode>) {
+        self.pointer = pointer
+    }
+}
+
+extension Node {
+    init?(nilPointer: UnsafePointer<_xmlNode>?) {
+        guard let pointer = nilPointer else {
             return nil
         }
-        type = nodeType
-        name = pointer.name()
-        content = pointer.content()
-        children = pointer.children()
-        attributes = pointer.attributes()
+        self.init(pointer: pointer)
     }
 }
 
@@ -38,7 +49,7 @@ extension Node {
         let endIndex = nodeSet.pointee.nodeNr
         let nodeTab = nodeSet.pointee.nodeTab
         for index in 0 ..< endIndex {
-            if let rawNode = nodeTab?[Int(index)], let node = Node(pointer: rawNode) {
+            if let rawNode = nodeTab?[Int(index)], let node = Node(nilPointer: rawNode) {
                 result.append(node)
             }
         }
