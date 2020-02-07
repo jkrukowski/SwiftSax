@@ -1,2 +1,2 @@
-HEADER_SEARCH_PATHS = /usr/local/opt/libxml2/include/libxml2
+HEADER_SEARCH_PATHS = /usr/local/opt/libxml2/include/libxml2 /usr/include/libxml2
 OTHER_LDFLAGS = -lxml2
