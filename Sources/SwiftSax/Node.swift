@@ -8,7 +8,15 @@
 import Clibxml2
 import Foundation
 
-public struct Node {
+public protocol Nodeable {
+    var type: NodeType? { mutating get }
+    var name: String { mutating get }
+    var children: [Node] { mutating get }
+    var attributes: [String: String] { mutating get }
+    var content: String? { mutating get }
+}
+
+public struct Node: Nodeable {
     private(set) public lazy var type: NodeType? = pointer.nodeType()
     private(set) public lazy var name: String = pointer.name()
     private(set) public lazy var children: [Node] = pointer.children()
