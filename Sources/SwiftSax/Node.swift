@@ -17,11 +17,11 @@ public protocol Nodeable {
 }
 
 public struct Node: Nodeable {
-    private(set) public lazy var type: NodeType? = pointer.nodeType()
-    private(set) public lazy var name: String = pointer.name()
-    private(set) public lazy var children: [Node] = pointer.children()
-    private(set) public lazy var attributes: [String: String] = pointer.attributes()
-    private(set) public lazy var content: String? = pointer.content()
+    public private(set) lazy var type: NodeType? = pointer.nodeType()
+    public private(set) lazy var name: String = pointer.name()
+    public private(set) lazy var children: [Node] = pointer.children()
+    public private(set) lazy var attributes: [String: String] = pointer.attributes()
+    public private(set) lazy var content: String? = pointer.content()
     private let pointer: UnsafePointer<_xmlNode>
 }
 

@@ -26,7 +26,7 @@ final class SwiftSaxTests: XCTestCase {
     }
 
     func testXpathAttribute() throws {
-        let parser = try Parser(data: #"<div><div class="some" key="value">text</div></div>"#.data)
+        let parser = try Parser(data: #"<div><div class="some" key="value">text</div></div>"# .data)
         var result = try parser.find(path: "//div[@class='some']")
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0].attributes["class"], "some")
@@ -35,7 +35,7 @@ final class SwiftSaxTests: XCTestCase {
     }
 
     func testXpathChildren() throws {
-        let parser = try Parser(data: #"<div class="some" key="value"><h1>text</h1></div>"#.data)
+        let parser = try Parser(data: #"<div class="some" key="value"><h1>text</h1></div>"# .data)
         var result = try parser.find(path: "//div[@key='value']")
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0].attributes["class"], "some")
