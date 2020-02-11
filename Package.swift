@@ -15,10 +15,18 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0")
     ],
     targets: [
+        .systemLibrary(
+            name: "Clibxml2",
+            path: "Modules",
+            pkgConfig: "libxml-2.0",
+            providers: [
+                .brew(["libxml2"]),
+                .apt(["libxml2-dev"])
+            ]
+        ),
         .target(
             name: "SwiftSax",
-            dependencies: ["Logging"],
-            linkerSettings: [.linkedLibrary("xml2")]
+            dependencies: ["Logging", "Clibxml2"]
         ),
         .testTarget(
             name: "SwiftSaxTests",
