@@ -17,19 +17,20 @@ let package = Package(
     targets: [
         .systemLibrary(
             name: "Clibxml2",
-            pkgConfig: "libxml2",
+            path: "Modules",
+            pkgConfig: "libxml-2.0",
             providers: [
                 .brew(["libxml2"]),
-                .apt(["libxml2"])
+                .apt(["libxml2-dev"])
             ]
         ),
         .target(
             name: "SwiftSax",
-            dependencies: ["Clibxml2", "Logging"]
+            dependencies: ["Logging", "Clibxml2"]
         ),
         .testTarget(
             name: "SwiftSaxTests",
-            dependencies: ["SwiftSax", "Clibxml2"]
+            dependencies: ["SwiftSax"]
         )
     ]
 )
