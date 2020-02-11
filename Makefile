@@ -8,4 +8,4 @@ test:
 	swift test --enable-test-discovery -Xcc -I/usr/local/opt/libxml2/include/libxml2 -Xcc -I/usr/include/libxml2 -Xlinker -lxml2
 
 xcode:
-	swift package generate-xcodeproj --enable-code-coverage --xcconfig-overrides swiftsax.xcconfig
+	swift package generate-xcodeproj --enable-code-coverage

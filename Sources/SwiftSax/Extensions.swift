@@ -5,7 +5,7 @@
 //  Created by Krukowski, Jan on 2/4/20.
 //
 
-import Clibxml2
+import libxml2
 import Foundation
 
 extension String {
