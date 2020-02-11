@@ -6,11 +6,24 @@
 //
 
 import Foundation
+import SwiftSax
 
 extension String {
     var data: Data {
         data(using: .utf8)!
     }
+}
+
+extension Parser.Option {
+    static let testing: Parser.Option = [
+        .recover,
+        .noBlanks,
+        .noError,
+        .noWarning,
+        .noNetwork,
+        .noImpliedElements,
+        .compactTextNodes
+    ]
 }
 
 let testString = #"""
