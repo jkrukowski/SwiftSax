@@ -1,3 +1,6 @@
+lint:
+	cd BuildTools && swift run -c release swiftformat ../ --lint --config ../.swiftformat
+
 format:
 	cd BuildTools && swift run -c release swiftformat ../
 
