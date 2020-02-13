@@ -5,64 +5,47 @@
 //  Created by Krukowski, Jan on 1/29/20.
 //
 
-import Foundation
 import Clibxml2
+import Foundation
+import Logging
+
+let logger = Logger(label: "SwiftSax.Parser")
 
 open class Parser {
-    open var eventHandler: ((ParserEvent) -> ())?
-    open var options: ParseOptions
+    open var options: Parser.Option
+    private let parserContext: htmlDocPtr
 
-    public init(options: ParseOptions = .default, eventHandler: ((ParserEvent) -> ())? = nil) {
+    public init(options: Parser.Option = .default, data: Data) throws {
         self.options = options
-        self.eventHandler = eventHandler
-    }
-
-    open func parse(data: Data) throws {
-        var htmlParser = htmlSAXHandler()
-        htmlParser.startDocument = { (context: UnsafeMutableRawPointer?) in
-            let parser = Parser.from(context: context)
-            parser?.eventHandler?(.startDocument)
-        }
-        htmlParser.endDocument = { (context: UnsafeMutableRawPointer?) in
-            let parser = Parser.from(context: context)
-            parser?.eventHandler?(.endDocument)
-        }
-        htmlParser.startElement = { (context: UnsafeMutableRawPointer?, namePointer: UnsafePointer<UInt8>?, attribuesPointer: UnsafeMutablePointer<UnsafePointer<UInt8>?>?) in
-            if let name = String(nilCString: namePointer) {
-                let attributes = [String:String](nilCArray: attribuesPointer)
-                let parser = Parser.from(context: context)
-                parser?.eventHandler?(.startElement(name: name, attribues: attributes))
-            }
-        }
-        htmlParser.endElement = { (context: UnsafeMutableRawPointer?, namePointer: UnsafePointer<UInt8>?) in
-            if let name = String(nilCString: namePointer) {
-                let parser = Parser.from(context: context)
-                parser?.eventHandler?(.endElement(name: name))
-            }
-        }
-        htmlParser.characters = { (context: UnsafeMutableRawPointer?, charactersPointer: UnsafePointer<UInt8>?, _) in
-            if let characters = String(nilCString: charactersPointer) {
-                let parser = Parser.from(context: context)
-                parser?.eventHandler?(.characters(value: characters))
-            }
-        }
-        guard let parserContext = htmlCreatePushParserCtxt(
-            &htmlParser, Unmanaged.passUnretained(self).toOpaque(), "", 0, "", XML_CHAR_ENCODING_NONE)
-        else {
-            throw ParserError.unknown
-        }
-        defer { htmlFreeParserCtxt(parserContext) }
-        _ = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> Int32 in
+        let inputPointer = try data.withUnsafeBytes { (input: UnsafeRawBufferPointer) -> UnsafePointer<CChar> in
             guard let inputPointer = input.bindMemory(to: CChar.self).baseAddress else {
-                throw ParserError.unknown
+                logger.error("Couldn't find input pointer")
+                throw ParserError.data
             }
-            return htmlParseChunk(parserContext, inputPointer, Int32(data.count), 0)
+            return inputPointer
         }
         let parseOptions = CInt(options.rawValue)
-        htmlCtxtUseOptions(parserContext, parseOptions)
-        let parseResult = htmlParseDocument(parserContext)
-        if let error = ParserError(context: parserContext, parseResult: parseResult) {
-            throw error
+        guard let parserContext = htmlReadMemory(inputPointer, Int32(data.count), "", nil, parseOptions) else {
+            logger.error("Couldn't create parser context")
+            throw ParserError.context
         }
+        self.parserContext = parserContext
+    }
+
+    open func find(path: String) throws -> [Node] {
+        guard let xpathContext = xmlXPathNewContext(parserContext) else {
+            logger.error("Couldn't create xPath context")
+            throw ParserError.context
+        }
+        defer { xmlXPathFreeContext(xpathContext) }
+        guard let xpath = xmlXPathEvalExpression(path, xpathContext) else {
+            logger.error("Couldn't evaluate xPath expression")
+            throw ParserError.xpath
+        }
+        return Node.from(xpath: xpath)
+    }
+
+    deinit {
+        xmlFreeDoc(parserContext)
     }
 }
