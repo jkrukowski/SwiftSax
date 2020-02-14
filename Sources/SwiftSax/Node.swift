@@ -42,17 +42,18 @@ extension Node {
 
 extension Node {
     static func from(xpath: xmlXPathObjectPtr) -> [Node] {
-        var result = [Node]()
         guard let nodeSet = xpath.pointee.nodesetval else {
-            return result
+            return []
         }
-        let endIndex = nodeSet.pointee.nodeNr
+        let endIndex = Int(nodeSet.pointee.nodeNr)
         let nodeTab = nodeSet.pointee.nodeTab
+        var result = ContiguousArray<Node>()
+        result.reserveCapacity(endIndex)
         for index in 0 ..< endIndex {
-            if let rawNode = nodeTab?[Int(index)], let node = Node(nilPointer: rawNode) {
+            if let rawNode = nodeTab?[index], let node = Node(nilPointer: rawNode) {
                 result.append(node)
             }
         }
-        return result
+        return Array(result)
     }
 }
