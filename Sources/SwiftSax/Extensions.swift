@@ -62,12 +62,12 @@ extension UnsafePointer where Pointee == _xmlNode {
         guard let children = pointee.children else {
             return []
         }
-        var result = [Node]()
+        var result = ContiguousArray<Node>()
         var current = children.pointee.next
         while let pointer = current, let node = Node(nilPointer: pointer) {
             result.append(node)
             current = current?.pointee.next
         }
-        return result
+        return Array(result)
     }
 }

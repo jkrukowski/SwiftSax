@@ -42,6 +42,7 @@ open class Parser {
             logger.error("Couldn't evaluate xPath expression")
             throw ParserError.xpath
         }
+        defer { xmlXPathFreeObject(xpath) }
         return Node.from(xpath: xpath)
     }
 
