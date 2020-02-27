@@ -9,25 +9,34 @@ import Clibxml2
 import Foundation
 
 public protocol Nodeable {
-    var type: NodeType? { mutating get }
-    var name: String { mutating get }
-    var children: [Node] { mutating get }
-    var attributes: [String: String] { mutating get }
-    var content: String? { mutating get }
+    var type: NodeType? { get }
+    var name: String { get }
+    var children: [Node] { get }
+    var attributes: [String: String] { get }
+    var data: Data? { get }
+    var content: String? { get }
 }
 
 public struct Node: Nodeable {
-    public private(set) lazy var type: NodeType? = pointer.nodeType()
-    public private(set) lazy var name: String = pointer.name()
-    public private(set) lazy var children: [Node] = pointer.children()
-    public private(set) lazy var attributes: [String: String] = pointer.attributes()
-    public private(set) lazy var content: String? = pointer.content()
-    private let pointer: UnsafePointer<_xmlNode>
+    public var type: NodeType?
+    public var name: String
+    public var children: [Node]
+    public var attributes: [String: String]
+    public var data: Data?
+    public var content: String? {
+        String(utf8Data: data)
+    }
 }
 
 extension Node {
     init(pointer: UnsafePointer<_xmlNode>) {
-        self.pointer = pointer
+        self.init(
+            type: pointer.nodeType(),
+            name: pointer.name(),
+            children: pointer.children(),
+            attributes: pointer.attributes(),
+            data: pointer.data()
+        )
     }
 }
 
@@ -47,13 +56,13 @@ extension Node {
         }
         let endIndex = Int(nodeSet.pointee.nodeNr)
         let nodeTab = nodeSet.pointee.nodeTab
-        var result = ContiguousArray<Node>()
+        var result = [Node]()
         result.reserveCapacity(endIndex)
         for index in 0 ..< endIndex {
             if let rawNode = nodeTab?[index], let node = Node(nilPointer: rawNode) {
                 result.append(node)
             }
         }
-        return Array(result)
+        return result
     }
 }
