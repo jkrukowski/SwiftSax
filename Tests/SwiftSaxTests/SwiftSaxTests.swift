@@ -21,7 +21,7 @@ final class SwiftSaxTests: XCTestCase {
         )
         XCTAssertTrue(try parser.find(path: "//a").isEmpty)
         XCTAssertTrue(try parser.find(path: "//div[@class='some']").isEmpty)
-        var result = try parser.find(path: "/div")
+        let result = try parser.find(path: "/div")
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0].content, "")
         XCTAssertTrue(result[0].children.isEmpty)
@@ -33,7 +33,7 @@ final class SwiftSaxTests: XCTestCase {
             options: .testing,
             data: #"<div><div class="some" key="value">text</div></div>"# .data
         )
-        var result = try parser.find(path: "//div[@class='some']")
+        let result = try parser.find(path: "//div[@class='some']")
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0].attributes["class"], "some")
         XCTAssertEqual(result[0].attributes["key"], "value")
@@ -45,7 +45,7 @@ final class SwiftSaxTests: XCTestCase {
             options: .testing,
             data: #"<div class="some" key="value"><h1>text</h1></div>"# .data
         )
-        var result = try parser.find(path: "//div[@key='value']")
+        let result = try parser.find(path: "//div[@key='value']")
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0].attributes["class"], "some")
         XCTAssertEqual(result[0].attributes["key"], "value")
@@ -57,7 +57,7 @@ final class SwiftSaxTests: XCTestCase {
             options: .testing,
             data: testString.data
         )
-        var result = try parser.find(path: "//header[@class='offer-item-header']//a/@href | //header[@class='offer-item-header']//a/@data-id")
+        let result = try parser.find(path: "//header[@class='offer-item-header']//a/@href | //header[@class='offer-item-header']//a/@data-id")
         XCTAssertEqual(result.count, 4)
         XCTAssertEqual(result[0].name, "href")
         XCTAssertEqual(result[0].content, "https://link.com/to/offer")
@@ -86,7 +86,7 @@ final class SwiftSaxTests: XCTestCase {
             options: .testing,
             data: testString.data
         )
-        var result = try parser.find(path: "//header[@class='offer-item-header']//strong")
+        let result = try parser.find(path: "//header[@class='offer-item-header']//strong")
         XCTAssertEqual(result.count, 2)
         XCTAssertEqual(result[0].name, "strong")
         XCTAssertEqual(result[0].content, "38 m")
