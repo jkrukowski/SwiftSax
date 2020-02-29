@@ -8,12 +8,42 @@
 import Clibxml2
 import Foundation
 
+extension UnsafePointer where Pointee == UInt8 {
+    func UTF8Length() -> Int {
+        var length = 0
+        while self[length] != 0 {
+            length += 1
+        }
+        return length
+    }
+}
+
+extension Data {
+    init?(nilCString: UnsafePointer<UInt8>?) {
+        guard let cString = nilCString else {
+            return nil
+        }
+        let pointer = UnsafeBufferPointer(
+            start: cString,
+            count: cString.UTF8Length()
+        )
+        self.init(buffer: pointer)
+    }
+}
+
 extension String {
     init?(nilCString: UnsafePointer<UInt8>?) {
         guard let cString = nilCString else {
             return nil
         }
         self.init(cString: cString)
+    }
+
+    init?(utf8Data: Data?) {
+        guard let data = utf8Data else {
+            return nil
+        }
+        self.init(decoding: data, as: UTF8.self)
     }
 }
 
@@ -38,14 +68,14 @@ extension UnsafePointer where Pointee == _xmlNode {
         return attributes
     }
 
-    func content() -> String? {
+    func data() -> Data? {
         guard let value = xmlNodeGetContent(self) else {
             return nil
         }
         defer {
             xmlFree(value)
         }
-        return String(nilCString: value)
+        return Data(nilCString: value)
     }
 
     func attributes(for name: String) -> String? {
@@ -62,12 +92,12 @@ extension UnsafePointer where Pointee == _xmlNode {
         guard let children = pointee.children else {
             return []
         }
-        var result = ContiguousArray<Node>()
+        var result = [Node]()
         var current = children.pointee.next
         while let pointer = current, let node = Node(nilPointer: pointer) {
             result.append(node)
             current = current?.pointee.next
         }
-        return Array(result)
+        return result
     }
 }
