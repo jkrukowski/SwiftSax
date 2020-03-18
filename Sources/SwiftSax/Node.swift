@@ -8,16 +8,7 @@
 import Clibxml2
 import Foundation
 
-public protocol Nodeable {
-    var type: NodeType? { get }
-    var name: String { get }
-    var children: [Node] { get }
-    var attributes: [String: String] { get }
-    var data: Data? { get }
-    var content: String? { get }
-}
-
-public struct Node: Nodeable {
+public struct Node {
     public var type: NodeType?
     public var name: String
     public var children: [Node]

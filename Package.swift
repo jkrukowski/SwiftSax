@@ -11,9 +11,7 @@ let package = Package(
             targets: ["SwiftSax"]
         )
     ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0")
-    ],
+    dependencies: [],
     targets: [
         .systemLibrary(
             name: "Clibxml2",
@@ -26,7 +24,7 @@ let package = Package(
         ),
         .target(
             name: "SwiftSax",
-            dependencies: ["Logging", "Clibxml2"]
+            dependencies: ["Clibxml2"]
         ),
         .testTarget(
             name: "SwiftSaxTests",
