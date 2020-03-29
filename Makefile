@@ -1,8 +1,8 @@
 lint:
-	mint run swiftformat --lint --config .swiftformat
+	cd BuildTools && swift run -c release swiftformat ../ --lint --config ../.swiftformat
 
 format:
-	mint run swiftformat
+	cd BuildTools && swift run -c release swiftformat ../
 
 build:
 	swift build
