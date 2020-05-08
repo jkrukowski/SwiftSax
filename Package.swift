@@ -2,10 +2,12 @@
 
 import PackageDescription
 
-#if os(Linux) || os(macOS)
+#if os(Linux)
 let dependencies: [Target.Dependency] = ["Clibxml2"]
+let linkerSettings: [LinkerSetting]? = nil
 #else
-let dependencies = []
+let dependencies: [Target.Dependency] = []
+let linkerSettings: [LinkerSetting]? = [.linkedLibrary("xml2")]
 #endif
 
 let package = Package(
@@ -30,7 +32,7 @@ let package = Package(
         .target(
             name: "SwiftSax",
             dependencies: dependencies,
-            linkerSettings: [.linkedLibrary("xml2")]
+            linkerSettings: linkerSettings
         ),
         .testTarget(
             name: "SwiftSaxTests",
