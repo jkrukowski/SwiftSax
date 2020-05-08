@@ -23,7 +23,8 @@ let package = Package(
         ),
         .target(
             name: "SwiftSax",
-            dependencies: ["Clibxml2"]
+            dependencies: ["Clibxml2"],
+            linkerSettings: [.linkedLibrary("xml2")]
         ),
         .testTarget(
             name: "SwiftSaxTests",
