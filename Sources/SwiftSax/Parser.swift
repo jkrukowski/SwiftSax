@@ -5,7 +5,7 @@
 //  Created by Krukowski, Jan on 1/29/20.
 //
 
-import Clibxml2
+import libxml2
 import Foundation
 
 open class Parser {

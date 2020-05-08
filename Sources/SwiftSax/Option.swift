@@ -5,7 +5,7 @@
 //  Created by Krukowski, Jan on 1/31/20.
 //
 
-import Clibxml2
+import libxml2
 import Foundation
 
 extension Parser {
