@@ -5,7 +5,7 @@
 //  Created by Krukowski, Jan on 1/29/20.
 //
 
-#if os(Linux) || os(macOS)
+#if os(Linux)
 import Clibxml2
 #else
 import libxml2
