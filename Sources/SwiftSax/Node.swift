@@ -5,7 +5,11 @@
 //  Created by Krukowski, Jan on 2/4/20.
 //
 
+#if os(Linux)
+import Clibxml2
+#else
 import libxml2
+#endif
 import Foundation
 
 public struct Node {

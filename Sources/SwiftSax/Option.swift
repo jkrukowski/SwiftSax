@@ -5,7 +5,11 @@
 //  Created by Krukowski, Jan on 1/31/20.
 //
 
+#if os(Linux)
+import Clibxml2
+#else
 import libxml2
+#endif
 import Foundation
 
 extension Parser {
