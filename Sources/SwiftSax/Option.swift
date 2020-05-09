@@ -6,9 +6,9 @@
 //
 
 #if os(Linux)
-import Clibxml2
+    import Clibxml2
 #else
-import libxml2
+    import libxml2
 #endif
 import Foundation
 
