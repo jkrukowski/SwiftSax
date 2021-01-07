@@ -9,8 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install Swift
-      uses: YOCKOW/Action-setup-swift@master
     - name: Dependencies
       run: sudo apt-get update && sudo apt-get install -y libxml2 libxml2-dev
     - name: Lint
